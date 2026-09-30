@@ -1,13 +1,13 @@
-import Test.Definitions
-import Test.Paper.Lemma2
-import Test.Support.Permutation
+import RealKSFLean.Definitions
+import RealKSFLean.Paper.Lemma2
+import RealKSFLean.Support.Permutation
 
 /-!
 # From the abstract `(A, B, D)` picture to flat `Fin`-indexed chains
 
-`Test.Paper.Lemma1` and `Test.Paper.Lemma2` prove Lemma 1 and Lemma 2 for a single chain, using
-*abstract* index types `A, B, D` for the "outer", "middle" and "inner" coordinates. This is
-enough there because both lemmas only ever look at *one* chain's own structure.
+`RealKSFLean.Paper.Lemma1` and `RealKSFLean.Paper.Lemma2` prove Lemma 1 and Lemma 2 for a single
+chain, using *abstract* index types `A, B, D` for the "outer", "middle" and "inner" coordinates.
+This is enough there because both lemmas only ever look at *one* chain's own structure.
 
 Lemma 3 (and later Proposition 1) compare *two different* chains `π = (a, b, c, d)` and
 `π' = (a', b', c', d')`, and the matrix product `Pπ' · (something built from π)` only makes
@@ -17,7 +17,7 @@ type `Fin a × Fin b × Fin d`. Two chains with `a*c*d = a'*b'*d'` (condition **
 the *same* flat index set on the nose, which is what makes Proposition 1's condition
 meaningful.
 
-This file establishes the technical properties of the flat bridge built in `Test.Definitions`
+This file establishes the technical properties of the flat bridge built in `RealKSFLean.Definitions`
 (`finChainEquiv`, `SF`, `PpermF`, `repeatFstFlat`, `sumToFinEquiv`, `IsKSparseFlat`): explicit
 value formulas, orthogonality, and the connection back to `IsKSparse`/`Prop1.rho`. None of this
 is stated as such in the paper — it is the bookkeeping needed to make Lemma 2/3 and Proposition 1
@@ -217,8 +217,8 @@ theorem SF_transpose (a b c d : ℕ) : (SF a b c d : Matrix _ _ R)ᵀ = SF a c b
 
 /-- **The explicit formula for `PpermF`.** `PpermF a b d` is exactly the permutation matrix of
 `Prop1.rho b d (a*(b*d))`: this is the identity that connects the *matrix* `PpermF` (built from
-the commutation matrix, `Test.Paper.Lemma1`/`Test.Paper.Lemma2`) to the *arithmetic* permutation
-`rho` used to state Proposition 1. -/
+the commutation matrix, `RealKSFLean.Paper.Lemma1`/`RealKSFLean.Paper.Lemma2`) to the *arithmetic*
+permutation `rho` used to state Proposition 1. -/
 theorem PpermF_apply (a b d : ℕ) (hb : 0 < b) (hd0 : 0 < d)
     (i : Fin (a * (2 * b * d))) (k : Fin (2 * (a * (b * d)))) :
     (PpermF a b d : Matrix _ _ R) i k =

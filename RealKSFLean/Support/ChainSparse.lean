@@ -1,13 +1,13 @@
-import Test.Support.ChainAssembly
-import Test.Paper.Proposition1
+import RealKSFLean.Support.ChainAssembly
+import RealKSFLean.Paper.Proposition1
 
 /-!
 # Kronecker-sparsity of the permuted factors `K̃_ℓ`
 
-This file shows that each `K̃_ℓ` (`Ktilde`, `Test.Definitions`) is *genuinely* Kronecker-sparse,
-for the "doubled" chain `(a_ℓ, 2 b_ℓ, 2 c_ℓ, d_ℓ)` (interior factors) or
+This file shows that each `K̃_ℓ` (`Ktilde`, `RealKSFLean.Definitions`) is *genuinely*
+Kronecker-sparse, for the "doubled" chain `(a_ℓ, 2 b_ℓ, 2 c_ℓ, d_ℓ)` (interior factors) or
 `(a_0, b_0, 2 c_0, d_0)` (the very first factor, which has no row-side permutation to undo).
-`Test.Paper.Corollary1` packages the results proved here (`ktilde_zero_ksparse`,
+`RealKSFLean.Paper.Corollary1` packages the results proved here (`ktilde_zero_ksparse`,
 `ktilde_succ_ksparse`) into the paper-facing, product-typed statement (`IsKSparse`).
 
 The proof computes `Ktilde ℓ I J` directly: `Pfor`'s two sandwich permutations each collapse a
@@ -23,7 +23,7 @@ factor `K_orig`. Two label-matching facts control when this collapses to zero:
   chains' flat index sets and only chainability (C1 ∧ C2 ∧ C3) guarantees this identification
   respects the `(a, d)`-grouping.
 
-This is an alternative, more direct route to the same fact `Test.Support.Assembly` targets
+This is an alternative, more direct route to the same fact `RealKSFLean.Support.Assembly` targets
 (`matrix_iff_C2_C3`, via Lemma 3): it does not use Lemma 3 at all, computing entries by hand
 instead.
 -/

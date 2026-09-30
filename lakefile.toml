@@ -1,7 +1,7 @@
-name = "Test"
+name = "RealKSFLean"
 version = "0.1.0"
 keywords = ["math"]
-defaultTargets = ["Test"]
+defaultTargets = ["RealKSFLean"]
 
 [leanOptions]
 pp.unicode.fun = true # pretty-prints `fun a ↦ b`
@@ -15,5 +15,5 @@ scope = "leanprover-community"
 rev = "v4.34.0-rc2"
 
 [[lean_lib]]
-name = "Test"
-globs = ["Test.*"]
+name = "RealKSFLean"
+globs = ["RealKSFLean.*"]

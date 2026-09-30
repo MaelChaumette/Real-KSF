@@ -21,12 +21,12 @@ most useful contributions are:
 2. Check `#print axioms <your_theorem>` doesn't pull in anything beyond Mathlib's own axioms
    (`Classical.choice`, `Quot.sound`, `propext`).
 3. Follow the project's existing structure (see [`README.md`](README.md#project-layout)):
-   * A `def`/`structure` belongs in [`Test/Definitions.lean`](Test/Definitions.lean), not in a
-     `Test/Paper` or `Test/Support` file.
-   * A theorem that states something the paper itself states belongs in `Test/Paper/`, named
+   * A `def`/`structure` belongs in [`RealKSFLean/Definitions.lean`](RealKSFLean/Definitions.lean), not in a
+     `RealKSFLean/Paper` or `RealKSFLean/Support` file.
+   * A theorem that states something the paper itself states belongs in `RealKSFLean/Paper/`, named
      and grouped to match the paper's own numbering.
    * A theorem that exists only to connect two paper statements in Lean (reindexing, value
-     lemmas, orthogonality, ...) belongs in `Test/Support/`.
+     lemmas, orthogonality, ...) belongs in `RealKSFLean/Support/`.
 4. Document *why*, not *what*: a docstring should explain which paper statement a declaration
    corresponds to and any non-obvious modeling choice, not restate the Lean code in prose.
 

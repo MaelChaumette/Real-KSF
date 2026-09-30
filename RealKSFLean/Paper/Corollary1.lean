@@ -1,16 +1,16 @@
-import Test.Support.ChainAssembly
-import Test.Support.ChainSparse
-import Test.Paper.RealPartChain
+import RealKSFLean.Support.ChainAssembly
+import RealKSFLean.Support.ChainSparse
+import RealKSFLean.Paper.RealPartChain
 
 /-!
 # Corollary 1: chainable architectures give Kronecker-sparse factorizations of `Re(K)`
 
 Following [3, Definition 4.12] (as communicated for this development): two consecutive chains
 `π = (a, b, c, d)` and `π' = (a', b', c', d')` are **chainable** when `C2` and `C3` hold (and,
-additionally, `d' ∣ d`, not needed here — see `Prop1.Chainable2`, `Test.Definitions`). An
+additionally, `d' ∣ d`, not needed here — see `Prop1.Chainable2`, `RealKSFLean.Definitions`). An
 architecture (a chain `π_1, ..., π_L`) is chainable when every consecutive pair is. The
 *pairwise* arithmetic statement — a chainable pair satisfies C1, C2, C3, hence
-`Prop1.Condition10` — is `Prop1.chainable_condition10` (`Test.Paper.Proposition1`); this file
+`Prop1.Condition10` — is `Prop1.chainable_condition10` (`RealKSFLean.Paper.Proposition1`); this file
 assembles the actual consequence for a whole chainable architecture: `Re(K)` admits a
 Kronecker-sparse factorization with the new chain `(π̃_1, ..., π̃_L)`.
 
@@ -36,7 +36,7 @@ chain, equals the permuted partial product `KtildeProd (L + 1)` followed by a la
 acting only on `K_{L+1}`'s own output space (the one factor that is *not* doubled by any
 `Pfor`, exactly as in `chain_re`/equation (3)). Combines `chain_re` (equation (3), applied to
 the flat chain `Kflat`) with the telescoping invariant `KtildeProd_eq`
-(`Test.Support.ChainAssembly`), cancelling the inserted `Pfor (L+1)ᵀ · Pfor (L+1)` pair. -/
+(`RealKSFLean.Support.ChainAssembly`), cancelling the inserted `Pfor (L+1)ᵀ · Pfor (L+1)` pair. -/
 theorem re_Kprod_eq_KtildeProd (L : ℕ) :
     (Kprod (Kflat a b c d hchain K_orig) (L + 2)).map Complex.re =
       KtildeProd a b c d hchain K_orig (L + 1) *

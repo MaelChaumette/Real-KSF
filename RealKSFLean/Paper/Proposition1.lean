@@ -1,5 +1,5 @@
-import Test.Definitions
-import Test.Support.Proposition1Aux
+import RealKSFLean.Definitions
+import RealKSFLean.Support.Proposition1Aux
 
 /-!
 # Proposition 1: the necessary and sufficient condition C1, C2, C3
@@ -7,7 +7,7 @@ import Test.Support.Proposition1Aux
 This file formalizes the arithmetic core of **Proposition 1**: given two consecutive chains
 `π = (a, b, c, d)` and `π' = (a', b', c', d')` with `a * c * d = a' * b' * d'` (condition
 **C1**), the permutation `P_{π'}` satisfies equation (10) — and hence, via
-`Test.Paper.Lemma3.lemma3_core`, equations (6)/(7) — if and only if
+`RealKSFLean.Paper.Lemma3.lemma3_core`, equations (6)/(7) — if and only if
 
 * **C2**: `a * c / a' = b' * d' / d ∈ ℕ` (`∃ r, a * c = a' * r ∧ b' * d' = d * r`);
 * **C3**: `a ∣ a'`.
@@ -16,19 +16,19 @@ This file formalizes the arithmetic core of **Proposition 1**: given two consecu
 
 Equation (10) (`P_{π'} · [S_(a,c,b',d) ; S_(a,c,b',d)] = S_(a,2c,b',d)`) is a matrix equation
 between `{0,1}`-matrices whose entries only depend on the *outer* (`a`) and *inner* (`d`)
-coordinates of their row (this is how `SG` is built, `Test.Definitions`). Consequently — this is
-exactly the paper's equation (11), reached by restricting attention to the rows sharing a given
+coordinates of their row (this is how `SG` is built, `RealKSFLean.Definitions`). Consequently — this
+is exactly the paper's equation (11), reached by restricting attention to the rows sharing a given
 outer/inner coordinate pair `(i, k2)` — condition (10) is equivalent to a purely arithmetic
 statement about the flat permutation
 
 `ρ n := 2 * (b'*d') * ((n % N) / (b'*d')) + (b'*d') * (n / N) + n % (b'*d')`
 
 of `Fin (2 * N)` (`N := a * c * d = a' * b' * d'`; this is the formula for `P_{π'}` unfolded via
-`finProdFinEquiv`/`finTwoEquiv`, see `Test.Support.FlatChain`): it must send the "label"
+`finProdFinEquiv`/`finTwoEquiv`, see `RealKSFLean.Support.FlatChain`): it must send the "label"
 `((n % N) / (c*d), n % d)` — which of the `a * d` blocks of the *stacked* `(a,c,d)`-grouping
 `n` belongs to — to the label `(m / (2*c*d), m % d)` — which block of the *doubled*
 `(a,2c,d)`-grouping `m = ρ n` belongs to — for every `n < 2 * N`. This is `Prop1.Condition10`
-(`Test.Definitions`).
+(`RealKSFLean.Definitions`).
 
 We checked this reformulation numerically against the paper's own formula, on several worked
 examples, before proving anything, to make sure no meaning was lost in translation: e.g. for
@@ -219,13 +219,13 @@ theorem prop1_core (a c d a' b' d' : ℕ)
 
 /-- **Corollary 1** (pairwise form, [3, Def. 4.12] ⟹ Proposition 1's hypotheses). A chainable
 pair of chains satisfies C1, C2 and C3, hence condition (10) holds — and, via
-`Test.Paper.Lemma3.lemma3_core`, so do equations (6)/(7): the real part of the product is
+`RealKSFLean.Paper.Lemma3.lemma3_core`, so do equations (6)/(7): the real part of the product is
 Kronecker-sparse across this junction. This is the *pairwise* statement, which is the actual
-arithmetic content: `C1` follows from `C2` alone (`Chainable2.c1`, `Test.Definitions`), so
+arithmetic content: `C1` follows from `C2` alone (`Chainable2.c1`, `RealKSFLean.Definitions`), so
 chainability's own `C2`- and `C3`-parts already give exactly what `prop1_core` needs. The
 architecture-level statement ("every junction of a chainable architecture") is this pairwise
 fact applied at each junction, with no new arithmetic content — see
-`Test.Paper.Corollary1` for the final assembly this feeds into. -/
+`RealKSFLean.Paper.Corollary1` for the final assembly this feeds into. -/
 theorem chainable_condition10 (a c d a' b' d' : ℕ)
     (ha : 0 < a) (ha' : 0 < a') (hc : 0 < c) (hd : 0 < d) (hb' : 0 < b') (hd' : 0 < d')
     (h : Chainable2 a c d a' b' d') :

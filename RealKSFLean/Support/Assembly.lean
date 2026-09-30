@@ -1,21 +1,21 @@
-import Test.Support.FlatChain
-import Test.Paper.Proposition1
+import RealKSFLean.Support.FlatChain
+import RealKSFLean.Paper.Proposition1
 
 /-!
 # `Condition10` as a matrix equation
 
-This file connects `Prop1.Condition10`'s arithmetic (`Test.Paper.Proposition1`) to an actual
-*matrix* equation built from `PpermF`/`SF`/`repeatFstFlat` (`Test.Definitions`), using the
+This file connects `Prop1.Condition10`'s arithmetic (`RealKSFLean.Paper.Proposition1`) to an actual
+*matrix* equation built from `PpermF`/`SF`/`repeatFstFlat` (`RealKSFLean.Definitions`), using the
 equivalence `rhoEquiv` underlying `PpermF`: `matrix_of_condition10` shows `Condition10` is
 exactly the entrywise content of `P_{π'} · [S_{(a,c,β,d)} ; S_{(a,c,β,d)}] = S_{(a,2c,β,d)}`
 (equation (10)), and `matrix_iff_C2_C3` combines this with Proposition 1 to characterize when
 `K̃_ℓ := Pℓ · K̄ℓ · Pℓ₊₁ᵀ` has the right support, via Lemma 3
-(`Test.Paper.Lemma3.lemma3_core`, not repeated here).
+(`RealKSFLean.Paper.Lemma3.lemma3_core`, not repeated here).
 
 This was the first strategy explored for proving the final Kronecker-sparsity of `K̃_ℓ`
-(`Test.Paper.Corollary1`); the assembly that was actually completed
-(`Test.Support.ChainSparse`) instead computes `K̃_ℓ`'s entries directly, without going through
-`repeatFstFlat`'s "stack of two copies" abstraction. The results here are independent,
+(`RealKSFLean.Paper.Corollary1`); the assembly that was actually completed
+(`RealKSFLean.Support.ChainSparse`) instead computes `K̃_ℓ`'s entries directly, without going
+through `repeatFstFlat`'s "stack of two copies" abstraction. The results here are independent,
 mathematically meaningful supporting work — they are simply not on the critical path of the
 final proof.
 -/
@@ -193,7 +193,7 @@ theorem matrix_iff_condition10 (a c d a' b' d' β : ℕ) (ha : 0 < a) (hc : 0 < 
     matrix_of_condition10 a c d a' b' d' β hc hd0 hb' hd'0 hβ hC1⟩
 
 /-- **The master "if and only if" for a single junction**: the matrix equation (10) — the one
-Lemma 3 (`Test.Paper.Lemma3.lemma3_core`) shows is equivalent, after transposing, to equation
+Lemma 3 (`RealKSFLean.Paper.Lemma3.lemma3_core`) shows is equivalent, after transposing, to equation
 (7) (the actual condition for `K̃_ℓ := Pℓ · K̄ℓ · Pℓ₊₁ᵀ` to have the Kronecker-sparse support of
 the doubled chain) — holds if and only if C2 ∧ C3 (C1 being the standing well-typedness
 hypothesis). Chaining through `lemma3_core` (an unconditional matrix identity, not repeated
@@ -202,7 +202,7 @@ here) this is exactly
   `K̃_ℓ has the right support ⟺ equation (10) holds ⟺ C1 ∧ C2 ∧ C3`
 
 for one junction of the architecture; Corollary 1
-(`Chainable2 → Condition10`, `Test.Paper.Corollary1.chainable_condition10`) is the "if"
+(`Chainable2 → Condition10`, `RealKSFLean.Paper.Corollary1.chainable_condition10`) is the "if"
 direction specialized to `Chainable2`. -/
 theorem matrix_iff_C2_C3 (a c d a' b' d' β : ℕ) (ha : 0 < a) (ha' : 0 < a') (hc : 0 < c)
     (hd0 : 0 < d) (hb' : 0 < b') (hd'0 : 0 < d') (hβ : 0 < β)

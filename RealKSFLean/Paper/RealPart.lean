@@ -12,7 +12,7 @@ product of `L` real matrices, obtained by doubling the row/column spaces of
 all but the outer factors.
 
 The Kronecker-sparse structure itself (Section II) is treated in
-`Test.Definitions`/`Test.Paper.Definition1`; this file only contains the
+`RealKSFLean.Definitions`/`RealKSFLean.Paper.Definition1`; this file only contains the
 underlying linear-algebra fact, which holds for arbitrary complex matrices.
 -/
 

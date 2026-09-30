@@ -1,19 +1,19 @@
-import Test.Support.Assembly
-import Test.Support.FlatChain
+import RealKSFLean.Support.Assembly
+import RealKSFLean.Support.FlatChain
 
 /-!
 # The telescoping assembly
 
 Given an infinite chainable sequence of chains `π_0, π_1, π_2, ...` (`Chainable2` holding at
 every junction) and, for each `k`, a genuine Kronecker-sparse factor `K_orig k` of chain `π_k`,
-`Test.Definitions` builds the flat reindexing `Kflat`, the permuted factors `Ktilde`, and their
-partial products `KtildeProd`. This file establishes the **telescoping identity**
+`RealKSFLean.Definitions` builds the flat reindexing `Kflat`, the permuted factors `Ktilde`, and
+their partial products `KtildeProd`. This file establishes the **telescoping identity**
 `KtildeProd (L+1) = Kbarprod (Kflat) (L+1) * (Pfor (L+1))ᵀ`, proved by induction using
 `Pfor_orthogonal` (`Pᵀ P = 1`) to cancel the inserted permutations, mirroring exactly
-`Test.Paper.RealPartChain.chain_re_im`'s own induction. None of `Jfam`, `Kflat`, `Pfor`,
+`RealKSFLean.Paper.RealPartChain.chain_re_im`'s own induction. None of `Jfam`, `Kflat`, `Pfor`,
 `Ktilde`, `KtildeProd` or this telescoping lemma appears as such in the paper — they are the
 Lean-specific scaffolding needed to build the factorization promised by Corollary 1
-(`Test.Paper.Corollary1`).
+(`RealKSFLean.Paper.Corollary1`).
 -/
 
 open Matrix Prop1

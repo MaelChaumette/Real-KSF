@@ -1,4 +1,4 @@
-import Test.Definitions
+import RealKSFLean.Definitions
 
 /-!
 # Lemma 1: the commutation matrix turns a "row-repeat" into another "row-repeat"
@@ -18,7 +18,7 @@ away turns the identity into a one-line computation with `Matrix.mul_apply`.
 
 This is exactly the fact used (packaged with the mixed-product property of the Kronecker
 product) to justify the permutation `P_π` of equation (9), and hence Lemma 2
-(`Test.Paper.Lemma2.Pperm_mul_repeatFst`, which builds `P_π` directly from
+(`RealKSFLean.Paper.Lemma2.Pperm_mul_repeatFst`, which builds `P_π` directly from
 `commutationMatrix_mul_repeatFst` below).
 -/
 

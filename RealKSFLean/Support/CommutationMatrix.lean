@@ -1,14 +1,14 @@
 import Mathlib.LinearAlgebra.Matrix.Vec
-import Test.Definitions
+import RealKSFLean.Definitions
 
 /-!
 # The commutation matrix, as an actual permutation of vectors
 
-A property of `commutationMatrix` (`Test.Definitions`) confirming it deserves its name: it
+A property of `commutationMatrix` (`RealKSFLean.Definitions`) confirming it deserves its name: it
 really does implement the commutation/transpose operation on stacked vectors,
 `K.mulVec A.vec = A.transpose.vec`. Not used elsewhere in the development (which only needs
-`commutationMatrix_mul_repeatFst`, `Test.Paper.Lemma1`), but recorded since it is the textbook
-justification for calling `commutationMatrix` a *commutation* matrix.
+`commutationMatrix_mul_repeatFst`, `RealKSFLean.Paper.Lemma1`), but recorded since it is the
+textbook justification for calling `commutationMatrix` a *commutation* matrix.
 -/
 
 variable (m n : Type*) [DecidableEq m] [DecidableEq n]

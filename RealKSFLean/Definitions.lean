@@ -6,9 +6,9 @@ import Mathlib.Tactic
 # All definitions used throughout the development
 
 This file collects, in one place, every `def`/`structure` used anywhere in this project — both
-in `Test/Paper` (the paper's own objects: Kronecker-sparse factors, the permutation `P_π`, the
-real/imaginary doubling `K̄`, the arithmetic of Proposition 1, ...) and in `Test/Support` (the
-extra bridging machinery — flat `Fin`-indexed reindexings, value-preserving casts, the
+in `RealKSFLean/Paper` (the paper's own objects: Kronecker-sparse factors, the permutation `P_π`,
+the real/imaginary doubling `K̄`, the arithmetic of Proposition 1, ...) and in `RealKSFLean/Support`
+(the extra bridging machinery — flat `Fin`-indexed reindexings, value-preserving casts, the
 telescoping construction `K̃_ℓ`, ... — needed to connect the paper's statements to each other in
 Lean but not part of the paper itself).
 
@@ -17,8 +17,8 @@ structural accessors (`Chainable2.c1/.c2/.c3`) that are needed *inside* later de
 (`colCastEquiv`) and so cannot live downstream of them.
 
 Each section below is a straight port of one original file's definitions, in the same order
-they used to appear, so `Test/Paper/*.lean` and `Test/Support/*.lean` can be read side by side
-with this file to see exactly which objects each proof is about.
+they used to appear, so `RealKSFLean/Paper/*.lean` and `RealKSFLean/Support/*.lean` can be read side
+by side with this file to see exactly which objects each proof is about.
 -/
 
 open Matrix
@@ -258,8 +258,8 @@ structure Chainable2 (a c d a' b' d' : ℕ) : Prop where
 
 /-- `Chainable2`'s `C2`-half, read off directly from its `r_dvd` field. This (and `.c3`, `.c1`
 below) are one-line structural accessors, not a paper *result* — they are proved here, rather
-than in `Test/Paper` or `Test/Support`, purely because `colCastEquiv`'s definition later in this
-file needs `.c1` to even typecheck. -/
+than in `RealKSFLean/Paper` or `RealKSFLean/Support`, purely because `colCastEquiv`'s definition
+later in this file needs `.c1` to even typecheck. -/
 theorem Chainable2.c2 (h : Chainable2 a c d a' b' d') : C2 a c d a' b' d' := h.r_dvd
 
 /-- `Chainable2`'s `C3`-half. -/

@@ -1,18 +1,18 @@
-import Test.Paper.Lemma1
-import Test.Paper.Definition1
-import Test.Paper.Lemma2
-import Test.Paper.Lemma3
-import Test.Paper.RealPart
-import Test.Paper.RealPartChain
-import Test.Paper.Proposition1
-import Test.Paper.Corollary1
+import RealKSFLean.Paper.Lemma1
+import RealKSFLean.Paper.Definition1
+import RealKSFLean.Paper.Lemma2
+import RealKSFLean.Paper.Lemma3
+import RealKSFLean.Paper.RealPart
+import RealKSFLean.Paper.RealPartChain
+import RealKSFLean.Paper.Proposition1
+import RealKSFLean.Paper.Corollary1
 
 /-!
-# Axiom audit for every result in `Test.Paper`
+# Axiom audit for every result in `RealKSFLean.Paper`
 
 This file is not a proof of anything: it runs `#print axioms` on every single theorem stated in
-`Test/Paper/*.lean` (i.e. every formalized statement of the paper), so that a reader — or CI —
-can see in one place that none of them relies on a `sorry` (which would show up as the axiom
+`RealKSFLean/Paper/*.lean` (i.e. every formalized statement of the paper), so that a reader — or CI
+— can see in one place that none of them relies on a `sorry` (which would show up as the axiom
 `sorryAx`) or on any axiom beyond the three Mathlib itself is built on:
 
 * `Classical.choice` (excluded middle / choice, used pervasively in Mathlib);

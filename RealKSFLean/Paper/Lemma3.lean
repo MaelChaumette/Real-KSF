@@ -1,6 +1,6 @@
-import Test.Paper.Lemma2
-import Test.Support.Lemma1Aux
-import Test.Support.Permutation
+import RealKSFLean.Paper.Lemma2
+import RealKSFLean.Support.Lemma1Aux
+import RealKSFLean.Support.Permutation
 
 /-!
 # Lemma 3
@@ -11,8 +11,8 @@ rows and columns via `Pπ` and then hit on the right by `P_{π'}ᵀ` for the *ne
 `(a, c, d)`-structure. The matrix products only make sense once the flat index sets
 `A × C × D` and `A' × B' × D'` are identified — condition **C1** in the paper — which we take
 here as an arbitrary hypothesis `e : A × C × D ≃ A' × B' × D'` (any witness that they have the
-same cardinality; `Test.Support.FlatChain` builds the *canonical*, arithmetic one once `a, b, c,
-d, a', b', d'` are actual naturals with `a * c * d = a' * b' * d'`).
+same cardinality; `RealKSFLean.Support.FlatChain` builds the *canonical*, arithmetic one once `a, b,
+c, d, a', b', d'` are actual naturals with `a * c * d = a' * b' * d'`).
 
 The proof is *pure algebra*: substitute Lemma 2 (`Pperm_mul_repeatFst`) into the "doubled
 twice" stack via `mul_repeatFstCol`, then transpose (`Matrix.transpose_mul`,

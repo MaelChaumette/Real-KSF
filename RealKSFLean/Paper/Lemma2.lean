@@ -1,4 +1,4 @@
-import Test.Definitions
+import RealKSFLean.Definitions
 
 /-!
 # Lemma 2: the permutation `P_π` doubles the `b` slot of a Kronecker-sparse chain
@@ -8,7 +8,7 @@ of each other and shows (**Lemma 2**) that the permutation `P_π := C_{2,a} ⊗ 
 equation (9) regroups the stack into the support `S_π̄` of the *doubled* chain
 `π̄ = (a, 2b, c, d)`.
 
-As in `Test.Paper.Lemma1`, we represent the doubled index set `⟦1, 2b⟧` by `Bool × B` rather
+As in `RealKSFLean.Paper.Lemma1`, we represent the doubled index set `⟦1, 2b⟧` by `Bool × B` rather
 than by `Fin (2b)` (dropping the never-used trivial `Fin 1` factor of `1_{2×1}`), and `P_π` is
 built *directly from the commutation matrix* of Lemma 1, exactly as in the paper's construction
 `P_π := C_{2,a} ⊗ I_{bd}` (equation (9)): `Pperm` acts by the commutation matrix

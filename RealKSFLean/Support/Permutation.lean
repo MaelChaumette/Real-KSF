@@ -1,14 +1,14 @@
-import Test.Definitions
+import RealKSFLean.Definitions
 
 /-!
 # `Pperm`'s technical properties
 
-Supporting facts about `Pperm`/`SG` (`Test.Definitions`) needed to assemble Lemma 3
-(`Test.Paper.Lemma3`) and the final telescoping construction (`Test.Support.ChainAssembly`):
-`Pperm_apply` gives `Pperm`'s entries explicitly, `Pperm_orthogonal` shows it is a genuine
-permutation matrix, and `SG_transpose` shows `S_π`'s support is (up to swapping `b` and `c`)
-symmetric under transposition. None of this is stated as such in the paper — it is the
-bookkeeping needed to reuse `Pperm` freely once it has been built.
+Supporting facts about `Pperm`/`SG` (`RealKSFLean.Definitions`) needed to assemble Lemma 3
+(`RealKSFLean.Paper.Lemma3`) and the final telescoping construction
+(`RealKSFLean.Support.ChainAssembly`): `Pperm_apply` gives `Pperm`'s entries explicitly,
+`Pperm_orthogonal` shows it is a genuine permutation matrix, and `SG_transpose` shows `S_π`'s
+support is (up to swapping `b` and `c`) symmetric under transposition. None of this is stated as
+such in the paper — it is the bookkeeping needed to reuse `Pperm` freely once it has been built.
 -/
 
 open Matrix

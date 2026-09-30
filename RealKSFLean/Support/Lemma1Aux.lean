@@ -1,10 +1,10 @@
-import Test.Definitions
+import RealKSFLean.Definitions
 
 /-!
 # Lemma 1's technical companions
 
-Purely formal companions of `repeatFst`/`repeatFstCol` (`Test.Definitions`), needed in
-`Test.Support.FlatChain` to handle the *column*-doubled matrices `[S_π S_π]` and
+Purely formal companions of `repeatFst`/`repeatFstCol` (`RealKSFLean.Definitions`), needed in
+`RealKSFLean.Support.FlatChain` to handle the *column*-doubled matrices `[S_π S_π]` and
 `[[S_π, S_π], [S_π, S_π]]` used by Lemma 3: `mul_repeatFstCol` says `repeatFstCol` commutes with
 left-multiplication, and `repeatFstCol_transpose`/`repeatFst_transpose` relate it to
 transposition. None of this is stated in the paper itself — it is bookkeeping needed to reuse

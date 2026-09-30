@@ -1,10 +1,10 @@
-import Test.Definitions
+import RealKSFLean.Definitions
 
 /-!
 # Proposition 1's elementary arithmetic helpers
 
 Two small, purely arithmetic lemmas used repeatedly inside the proofs of `sufficiency` and
-`necessity` (`Test.Paper.Proposition1`): `divModEq` reads off a quotient and remainder from a
+`necessity` (`RealKSFLean.Paper.Proposition1`): `divModEq` reads off a quotient and remainder from a
 mixed-radix decomposition without re-deriving division facts by hand each time, and
 `dvd_mod_zero` is the trivial "divisibility means zero remainder" fact. Neither is stated in the
 paper — they are generic `Nat` bookkeeping.

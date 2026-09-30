@@ -1,11 +1,11 @@
-import Test.Definitions
+import RealKSFLean.Definitions
 
 /-!
 # Definition 1: Kronecker-sparse factors, and their real/imaginary parts
 
 For `a b c d : ℕ`, a matrix in `ℝ^{abd × acd}` (or `ℂ^{abd × acd}`) is a *Kronecker-sparse
 factor of chain `π = (a, b, c, d)`* if its support is included in
-`S_π := I_a ⊗ 1_{b×c} ⊗ I_d` (`IsKSparse`, `Test.Definitions`).
+`S_π := I_a ⊗ 1_{b×c} ⊗ I_d` (`IsKSparse`, `RealKSFLean.Definitions`).
 
 This file records the first observation of Section III-A: being Kronecker-sparse only depends
 on the support, so a single factor's real and imaginary parts are Kronecker-sparse with the

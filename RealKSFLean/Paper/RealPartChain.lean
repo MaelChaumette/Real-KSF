@@ -1,12 +1,12 @@
-import Test.Definitions
-import Test.Paper.RealPart
+import RealKSFLean.Definitions
+import RealKSFLean.Paper.RealPart
 
 /-!
 # The general recursive identity (equation (3))
 
 Given a chain of complex matrices `K 0, K 1, ..., K (L-1)` with `K k : Matrix (J k) (J (k+1)) ℂ`,
 this file shows that the real part of the product `K 0 * K 1 * ... * K (L-1)` can be written as
-a product of `L` *real* matrices `Kbar 0, ..., Kbar (L-1)` (`Test.Definitions`), obtained by
+a product of `L` *real* matrices `Kbar 0, ..., Kbar (L-1)` (`RealKSFLean.Definitions`), obtained by
 doubling the row/column spaces of all factors except the very first row space `J 0`:
 
 * `Kbar 0 := [Re (K 0) | Im (K 0)]` (a `fromCols` block)
