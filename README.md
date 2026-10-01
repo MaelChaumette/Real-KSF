@@ -8,12 +8,12 @@ A [Lean 4](https://leanprover.github.io/) / [Mathlib](https://leanprover-communi
 formalization of the results of
 
 > Maël Chaumette, Rémi Gribonval, Elisa Riccietti,
-> *"On the Real and Imaginary Parts of Kronecker-Sparse Factorizations, with Application to Fast Transforms."*
+> *"On the Real Part of Butterfly Factorizations, with Application to Fast Transforms."*
 > <!-- TODO: add venue / year / arXiv or DOI link once available -->
 
-The paper studies **Kronecker-sparse factorizations** — products of matrices whose supports follow a Kronecker pattern $\mathbf{I}_a ⊗ \mathbf{1}_{b×c} ⊗ \mathbf{I}_d$ — and shows that if a complex matrix $\mathbf{K}$ admits a Kronecker-sparse factorization along a *chainable architecture* [[1, Definition 4.12]](#1), then its real part $\mathrm{Re}(\mathbf{K})$ also admits an explicit Kronecker-sparse factorization, doubling the row/column spaces along the way.
+The paper studies **butterfly factorizations** — products of Kronecker-sparse factors, i.e. matrices whose supports follow a Kronecker pattern $\mathbf{I}_a ⊗ \mathbf{1}_{b×c} ⊗ \mathbf{I}_d$ — and shows that if a complex matrix $\mathbf{A}$ admits a butterfly factorization whose architecture satisfies three explicit conditions C1–C3 (in particular, any *chainable architecture* [[1, Definition 4.12]](#1)), then its real part $\mathrm{Re}(\mathbf{A})$ also admits an explicit butterfly factorization, doubling the row/column spaces along the way. The imaginary part, and more generally $\mathrm{Re}(z\mathbf{A})$, follows since $\mathrm{Im}(\mathbf{K}_1\cdots\mathbf{K}_L) = \mathrm{Re}((-\jmath\mathbf{K}_1)\cdots\mathbf{K}_L)$.
 
-This repository formalizes every numbered statement of the paper (Lemmas 1–3, Definition 1, equations (1)–(3), Proposition 1, Corollary 1) as machine-checked Lean theorems, with **no `sorry` and no additional axioms** beyond what Mathlib itself uses.
+This repository formalizes the numbered statements of the paper (Definitions 1–2, equations (1)–(10), Lemmas 1–2, Proposition 1, Corollary 1) as machine-checked Lean theorems, with **no `sorry` and no additional axioms** beyond what Mathlib itself uses.
 
 ## Project layout
 
@@ -28,30 +28,40 @@ RealKSFLean/Support/         — bridging lemmas needed along the way, not state
 
 | Directory | Contents |
 |---|---|
-| [`RealKSFLean/Definitions.lean`](RealKSFLean/Definitions.lean) | Kronecker-sparse factors (`IsKSparse`), the permutation `P_π` (`Pperm`), the real/imaginary doubling `Kbar`/`Kbarprod`, the arithmetic of Proposition 1 (`Prop1.rho`, `Condition10`, `C1`/`C2`/`C3`, `Chainable2`), and the flat/telescoping objects (`Kflat`, `Pfor`, `Ktilde`, `KtildeProd`) used to assemble Corollary 1. |
-| [`RealKSFLean/Paper/`](RealKSFLean/Paper) | `Lemma1.lean`, `Definition1.lean`, `Lemma2.lean`, `Lemma3.lean`, `RealPart.lean`, `RealPartChain.lean`, `Proposition1.lean`, `Corollary1.lean` — one file per paper statement (or tight group of statements). |
-| [`RealKSFLean/Support/`](RealKSFLean/Support) | `CommutationMatrix.lean`, `Lemma1Aux.lean`, `Permutation.lean`, `FlatChain.lean`, `Proposition1Aux.lean`, `Assembly.lean`, `ChainAssembly.lean`, `ChainSparse.lean` — reindexings between the abstract, `Bool×`-typed, and flat `Fin`-indexed pictures, orthogonality of permutation matrices, and the telescoping construction of `K̃_ℓ`. |
+| [`RealKSFLean/Definitions.lean`](RealKSFLean/Definitions.lean) | Kronecker-sparse factors (`IsKSparse`), the commutation matrix (`commutationMatrix`), the permutation `P_π` (`Pperm`), the real/imaginary doubling `Kbar`/`Kbarprod`, `scaleFirst`, `ksWitness`, the arithmetic of Proposition 1 (`Prop1.rho`, `Condition10`, `C1`/`C2`/`C3`, `Conditions`, `Chainable2`), and the flat/telescoping objects (`Kflat`, `Pfor`, `Ktilde`, `KtildeProd`) used to assemble Proposition 1 at the architecture level. |
+| [`RealKSFLean/Paper/`](RealKSFLean/Paper) | `Definition1.lean`, `Definition2.lean`, `RealPart.lean`, `RealPartChain.lean`, `Equation8.lean`, `Lemma1.lean`, `Lemma2.lean`, `Proposition1.lean`, `Proposition1Architecture.lean`, `Corollary1.lean` — one file per paper statement (or tight group of statements). |
+| [`RealKSFLean/Support/`](RealKSFLean/Support) | `Lemma2Aux.lean`, `Permutation.lean`, `FlatChain.lean`, `Proposition1Aux.lean`, `Assembly.lean`, `ChainAssembly.lean`, `ChainSparse.lean`, `Necessity.lean` — reindexings between the abstract, `Bool×`-typed, and flat `Fin`-indexed pictures, orthogonality of permutation matrices, and the telescoping construction of `K̃_ℓ`. |
 
 ## Correspondence with the paper
 
 | Paper statement | Lean declaration | File |
 |---|---|---|
-| Definition 1 (Kronecker-sparse factor) | `IsKSparse` | [`RealKSFLean/Definitions.lean`](RealKSFLean/Definitions.lean) |
-| Definition 1 (real/imaginary parts stay Kronecker-sparse) | `IsKSparse.re`, `IsKSparse.im` | [`RealKSFLean/Paper/Definition1.lean`](RealKSFLean/Paper/Definition1.lean) |
-| Lemma 1 | `commutationMatrix_mul_repeatFst` | [`RealKSFLean/Paper/Lemma1.lean`](RealKSFLean/Paper/Lemma1.lean) |
-| Lemma 2 | `Pperm_mul_repeatFst` | [`RealKSFLean/Paper/Lemma2.lean`](RealKSFLean/Paper/Lemma2.lean) |
-| Lemma 3 | `lemma3_core` | [`RealKSFLean/Paper/Lemma3.lean`](RealKSFLean/Paper/Lemma3.lean) |
-| Equation (1) | `re_mul` | [`RealKSFLean/Paper/RealPart.lean`](RealKSFLean/Paper/RealPart.lean) |
-| Equation (2) | `im_mul` | [`RealKSFLean/Paper/RealPart.lean`](RealKSFLean/Paper/RealPart.lean) |
-| Equation (3) | `chain_re` | [`RealKSFLean/Paper/RealPartChain.lean`](RealKSFLean/Paper/RealPartChain.lean) |
-| Remark 2 (DHT, imaginary-part analogue of (3)) | `chain_im` | [`RealKSFLean/Paper/RealPartChain.lean`](RealKSFLean/Paper/RealPartChain.lean) |
-| Proposition 1 | `Prop1.prop1_core` | [`RealKSFLean/Paper/Proposition1.lean`](RealKSFLean/Paper/Proposition1.lean) |
-| Corollary 1 (chainable ⟹ condition (10), pairwise) | `Prop1.chainable_condition10` | [`RealKSFLean/Paper/Proposition1.lean`](RealKSFLean/Paper/Proposition1.lean) |
-| Corollary 1 (factorization of `Re(K)`) | `re_Kprod_eq_KtildeProd` | [`RealKSFLean/Paper/Corollary1.lean`](RealKSFLean/Paper/Corollary1.lean) |
-| Corollary 1 (each new factor is Kronecker-sparse) | `ktilde_zero_isKSparse`, `ktilde_succ_isKSparse` | [`RealKSFLean/Paper/Corollary1.lean`](RealKSFLean/Paper/Corollary1.lean) |
+| Definition 1 (Kronecker-sparse factor of pattern `π`) | `IsKSparse` | [`RealKSFLean/Definitions.lean`](RealKSFLean/Definitions.lean) |
+| Section III-A, `L = 1` (real/imaginary parts keep the pattern) | `IsKSparse.re`, `IsKSparse.im` | [`RealKSFLean/Paper/Definition1.lean`](RealKSFLean/Paper/Definition1.lean) |
+| Section III-A, `L = 2` (linear algebra behind (1)) | `re_mul`, `im_mul` | [`RealKSFLean/Paper/RealPart.lean`](RealKSFLean/Paper/RealPart.lean) |
+| Equation (1) (pre-factorization of `Re(A)`) | `chain_re` (and `chain_im` for `Im`) | [`RealKSFLean/Paper/RealPartChain.lean`](RealKSFLean/Paper/RealPartChain.lean) |
+| Equations (2)–(3) (permuted factors `K̃_ℓ`, patterns `π'_ℓ`) | `Ktilde`, `KtildeProd` | [`RealKSFLean/Definitions.lean`](RealKSFLean/Definitions.lean) |
+| Definition 2 (commutation matrix) | `commutationMatrix`, `commutationMatrix_mulVec_vec` | [`RealKSFLean/Paper/Definition2.lean`](RealKSFLean/Paper/Definition2.lean) |
+| Equation (7) (`P_π := C_{a,2} ⊗ I_{bd}`) | `Pperm`, `PpermF` | [`RealKSFLean/Definitions.lean`](RealKSFLean/Definitions.lean) |
+| Equation (8) | `commutationMatrix_mul_repeatFst` | [`RealKSFLean/Paper/Equation8.lean`](RealKSFLean/Paper/Equation8.lean) |
+| Lemma 1 | `Pperm_mul_repeatFst` | [`RealKSFLean/Paper/Lemma1.lean`](RealKSFLean/Paper/Lemma1.lean) |
+| Lemma 2 ((4) ⟺ (9) for `ℓ = 1`, (5) ⟺ (9) otherwise) | `lemma2_first`, `lemma2_core` | [`RealKSFLean/Paper/Lemma2.lean`](RealKSFLean/Paper/Lemma2.lean) |
+| Equations (9)/(10) (matrix and row-permutation forms) | `Prop1.Condition10`, `matrix_iff_condition10` | [`RealKSFLean/Definitions.lean`](RealKSFLean/Definitions.lean), [`RealKSFLean/Support/Assembly.lean`](RealKSFLean/Support/Assembly.lean) |
+| Proposition 1 (one junction: (9) ⟺ C2 ∧ C3 under C1) | `Prop1.prop1_core`, `Prop1.condition10_iff_conditions`, `matrix_iff_C2_C3` | [`RealKSFLean/Paper/Proposition1.lean`](RealKSFLean/Paper/Proposition1.lean), [`RealKSFLean/Support/Assembly.lean`](RealKSFLean/Support/Assembly.lean) |
+| Proposition 1 (C2 ∧ C3 at every junction ⟺ every `K̃_ℓ ∈ 𝒦_{π'_ℓ}`, under C1) | `proposition1` | [`RealKSFLean/Paper/Proposition1Architecture.lean`](RealKSFLean/Paper/Proposition1Architecture.lean) |
+| Proposition 1 (C1–C3 ⟹ `Re(A) = K̃_1 ⋯ K̃_L`) | `re_Kprod_eq_KtildeProd` | [`RealKSFLean/Paper/Proposition1Architecture.lean`](RealKSFLean/Paper/Proposition1Architecture.lean) |
+| Proposition 1, sufficiency (C1–C3 ⟹ `K̃_ℓ ∈ 𝒦_{π'_ℓ}`) | `ktilde_zero_isKSparse`, `ktilde_succ_isKSparse`, `ktilde_last_isKSparse` | [`RealKSFLean/Paper/Proposition1Architecture.lean`](RealKSFLean/Paper/Proposition1Architecture.lean) |
+| Proposition 1, necessity (`K̃_ℓ ∈ 𝒦_{π'_ℓ}` ⟹ C2 ∧ C3) | `conditions_of_ktilde_zero`, `conditions_of_ktilde_succ` | [`RealKSFLean/Paper/Proposition1Architecture.lean`](RealKSFLean/Paper/Proposition1Architecture.lean) |
+| Corollary 1 (chainable architectures) | `chainable_conditions`, `corollary1` | [`RealKSFLean/Paper/Corollary1.lean`](RealKSFLean/Paper/Corollary1.lean) |
+| Section III-D (imaginary part, `Re(zA)`) | `Kprod_scaleFirst`, `im_Kprod_eq_re_scaleFirst`, `IsKSparse.smul` | [`RealKSFLean/Paper/RealPartChain.lean`](RealKSFLean/Paper/RealPartChain.lean), [`RealKSFLean/Paper/Definition1.lean`](RealKSFLean/Paper/Definition1.lean) |
 
-Reading order for the mathematics: `Lemma1 → Definition1 → Lemma2 → Lemma3 → RealPart →
-RealPartChain → Proposition1 → Corollary1`. Every `RealKSFLean/Paper/*.lean` file starts with a
+Both directions of Proposition 1 are formalized at the level of the permuted factors
+(`proposition1`). The "only if" direction tests the Kronecker-sparse factors
+`K_ℓ := (1 + 𝚥) S_{π_ℓ}` (`ksWitness`): if their permuted factors `K̃_ℓ` lie in `𝒦_{π'_ℓ}`, then
+equation (10) holds at every junction, hence C2 ∧ C3.
+
+Reading order for the mathematics: `Definition1 → RealPart → RealPartChain → Definition2 →
+Equation8 → Lemma1 → Lemma2 → Proposition1 → Proposition1Architecture → Corollary1`. Every `RealKSFLean/Paper/*.lean` file starts with a
 docstring explaining the statement it formalizes and how its proof is organized; consult the
 matching `RealKSFLean/Support/*.lean` file for the proofs of any technical lemma it relies on that is
 not itself part of the paper.

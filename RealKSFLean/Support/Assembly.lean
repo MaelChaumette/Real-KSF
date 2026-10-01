@@ -8,9 +8,9 @@ This file connects `Prop1.Condition10`'s arithmetic (`RealKSFLean.Paper.Proposit
 *matrix* equation built from `PpermF`/`SF`/`repeatFstFlat` (`RealKSFLean.Definitions`), using the
 equivalence `rhoEquiv` underlying `PpermF`: `matrix_of_condition10` shows `Condition10` is
 exactly the entrywise content of `P_{π'} · [S_{(a,c,β,d)} ; S_{(a,c,β,d)}] = S_{(a,2c,β,d)}`
-(equation (10)), and `matrix_iff_C2_C3` combines this with Proposition 1 to characterize when
-`K̃_ℓ := Pℓ · K̄ℓ · Pℓ₊₁ᵀ` has the right support, via Lemma 3
-(`RealKSFLean.Paper.Lemma3.lemma3_core`, not repeated here).
+(equation (9)), and `matrix_iff_C2_C3` combines this with Proposition 1 to characterize when
+`K̃_ℓ := Pℓ · K̄ℓ · Pℓ₊₁ᵀ` has the right support, via Lemma 2
+(`RealKSFLean.Paper.Lemma2.lemma2_core`, not repeated here).
 
 This was the first strategy explored for proving the final Kronecker-sparsity of `K̃_ℓ`
 (`RealKSFLean.Paper.Corollary1`); the assembly that was actually completed
@@ -44,7 +44,7 @@ set_option maxHeartbeats 1000000 in
 -- / `repeatFstFlat_apply` / `SF_apply`) accumulates enough terms that the default heartbeat
 -- budget is too tight, even though every step is elementary.
 /-- **The missing link.** `Condition10` is exactly the entrywise content of the matrix equation
-`P_{π'} · [S_{(a,c,β,d)} ; S_{(a,c,β,d)}] = S_{(a,2c,β,d)}` (equation (10), for an arbitrary
+`P_{π'} · [S_{(a,c,β,d)} ; S_{(a,c,β,d)}] = S_{(a,2c,β,d)}` (equation (9), for an arbitrary
 "free" `β` — the already-doubled `b` slot inherited from the real/imaginary-part construction,
 which plays no role in the combinatorics). We only need this one direction
 (`Condition10 → ` the matrix equation). Stated for a general `CommSemiring R` (not just `ℕ`)
@@ -181,7 +181,7 @@ theorem condition10_of_matrix (a c d a' b' d' β : ℕ) (ha : 0 < a) (hc : 0 < c
     rw [e1, e2]
   · exact absurd hLHS (by simp [hcase])
 
-/-- **Equation (10), as a genuine "if and only if" with the matrix world**: combining
+/-- **Equation (9), as a genuine "if and only if" with the matrix world**: combining
 `matrix_of_condition10` and its converse `condition10_of_matrix`. -/
 theorem matrix_iff_condition10 (a c d a' b' d' β : ℕ) (ha : 0 < a) (hc : 0 < c) (hd0 : 0 < d)
     (hb' : 0 < b') (hd'0 : 0 < d') (hβ : 0 < β) (hC1 : a * (c * d) = a' * (b' * d')) :
@@ -192,25 +192,24 @@ theorem matrix_iff_condition10 (a c d a' b' d' β : ℕ) (ha : 0 < a) (hc : 0 < 
   ⟨condition10_of_matrix a c d a' b' d' β ha hc hd0 hb' hd'0 hβ hC1,
     matrix_of_condition10 a c d a' b' d' β hc hd0 hb' hd'0 hβ hC1⟩
 
-/-- **The master "if and only if" for a single junction**: the matrix equation (10) — the one
-Lemma 3 (`RealKSFLean.Paper.Lemma3.lemma3_core`) shows is equivalent, after transposing, to equation
-(7) (the actual condition for `K̃_ℓ := Pℓ · K̄ℓ · Pℓ₊₁ᵀ` to have the Kronecker-sparse support of
-the doubled chain) — holds if and only if C2 ∧ C3 (C1 being the standing well-typedness
-hypothesis). Chaining through `lemma3_core` (an unconditional matrix identity, not repeated
-here) this is exactly
+/-- **The master "if and only if" for a single junction**: the matrix equation (9) — the one
+Lemma 2 (`RealKSFLean.Paper.Lemma2.lemma2_core`) shows is equivalent, after transposing, to
+equation (5) (the actual condition for `K̃_ℓ := Pℓ · K̄ℓ · Pℓ₊₁ᵀ` to have the Kronecker-sparse
+support of the doubled pattern) — holds if and only if C2 ∧ C3 (C1 being the standing
+well-typedness hypothesis). Chaining through `lemma2_core` (an unconditional matrix identity, not
+repeated here) this is exactly
 
-  `K̃_ℓ has the right support ⟺ equation (10) holds ⟺ C1 ∧ C2 ∧ C3`
+  `K̃_ℓ has the right support ⟺ equation (9) holds ⟺ C1 ∧ C2 ∧ C3`
 
-for one junction of the architecture; Corollary 1
-(`Chainable2 → Condition10`, `RealKSFLean.Paper.Corollary1.chainable_condition10`) is the "if"
-direction specialized to `Chainable2`. -/
+for one junction of the architecture (Proposition 1); `Prop1.conditions_condition10` is the
+"if" direction. -/
 theorem matrix_iff_C2_C3 (a c d a' b' d' β : ℕ) (ha : 0 < a) (ha' : 0 < a') (hc : 0 < c)
     (hd0 : 0 < d) (hb' : 0 < b') (hd'0 : 0 < d') (hβ : 0 < β)
     (hC1 : a * (c * d) = a' * (b' * d')) :
     (Matrix.submatrix (PpermF a' b' d' : Matrix _ _ ℕ) id (castDouble hC1) *
         (repeatFstFlat a c β d : Matrix _ _ ℕ) =
       Matrix.submatrix (SF a (2 * c) β d : Matrix _ _ ℕ) (aDouble hC1).symm id) ↔
-      C2 a c d a' b' d' ∧ C3 a a' :=
+      C2 d b' d' ∧ C3 a a' :=
   (matrix_iff_condition10 a c d a' b' d' β ha hc hd0 hb' hd'0 hβ hC1).trans
     ((mul_assoc a c d ▸ Iff.rfl : Condition10 c d b' d' (a * (c * d)) ↔
         Condition10 c d b' d' (a * c * d)).trans

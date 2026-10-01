@@ -4,29 +4,30 @@ import RealKSFLean.Support.FlatChain
 /-!
 # The telescoping assembly
 
-Given an infinite chainable sequence of chains `π_0, π_1, π_2, ...` (`Chainable2` holding at
-every junction) and, for each `k`, a genuine Kronecker-sparse factor `K_orig k` of chain `π_k`,
+Given an infinite architecture `π_0, π_1, π_2, ...` satisfying C1 (compatible dimensions) at
+every junction and, for each `k`, a genuine Kronecker-sparse
+factor `K_orig k` of pattern `π_k`,
 `RealKSFLean.Definitions` builds the flat reindexing `Kflat`, the permuted factors `Ktilde`, and
 their partial products `KtildeProd`. This file establishes the **telescoping identity**
 `KtildeProd (L+1) = Kbarprod (Kflat) (L+1) * (Pfor (L+1))ᵀ`, proved by induction using
 `Pfor_orthogonal` (`Pᵀ P = 1`) to cancel the inserted permutations, mirroring exactly
 `RealKSFLean.Paper.RealPartChain.chain_re_im`'s own induction. None of `Jfam`, `Kflat`, `Pfor`,
 `Ktilde`, `KtildeProd` or this telescoping lemma appears as such in the paper — they are the
-Lean-specific scaffolding needed to build the factorization promised by Corollary 1
-(`RealKSFLean.Paper.Corollary1`).
+Lean-specific scaffolding needed to build the factorization promised by Proposition 1
+(`RealKSFLean.Paper.Proposition1Architecture`) and Corollary 1 (`RealKSFLean.Paper.Corollary1`).
 -/
 
 open Matrix Prop1
 
 variable (a b c d : ℕ → ℕ)
-variable (hchain : ∀ k, Chainable2 (a k) (c k) (d k) (a (k + 1)) (b (k + 1)) (d (k + 1)))
+variable (hC1 : ∀ k, C1 (a k) (c k) (d k) (a (k + 1)) (b (k + 1)) (d (k + 1)))
 
 @[simp] theorem colCastEquiv_apply_val (k : ℕ) (i : Fin (a k * (c k * d k))) :
-    (colCastEquiv a b c d hchain k i).val = i.val :=
+    (colCastEquiv a b c d hC1 k i).val = i.val :=
   natCastEquiv_apply_val _ i
 
 @[simp] theorem colCastEquiv_symm_apply_val (k : ℕ) (j : Jfam a b d (k + 1)) :
-    ((colCastEquiv a b c d hchain k).symm j).val = j.val :=
+    ((colCastEquiv a b c d hC1 k).symm j).val = j.val :=
   natCastEquiv_symm_apply_val _ j
 
 /-- **`Pfor` is orthogonal**: it is `PpermF`, which is already the permutation matrix of an
@@ -56,28 +57,28 @@ set_option maxHeartbeats 800000 in
 cancelling adjacent `Pfor kᵀ · Pfor k = 1` pairs (`Pfor_orthogonal`) telescopes down to just a
 trailing `Pfor (L+1)ᵀ`. This mirrors `chain_re_im`'s own induction exactly. -/
 theorem KtildeProd_eq (L : ℕ) :
-    KtildeProd a b c d hchain K_orig (L + 1) =
-      Kbarprod (Kflat a b c d hchain K_orig) (L + 1) * (Pfor a b d (L + 1))ᵀ := by
+    KtildeProd a b c d hC1 K_orig (L + 1) =
+      Kbarprod (Kflat a b c d hC1 K_orig) (L + 1) * (Pfor a b d (L + 1))ᵀ := by
   induction L with
   | zero =>
-    have h0 : KtildeProd a b c d hchain K_orig 0 = 1 := rfl
-    have h1 : Ktilde a b c d hchain K_orig 0 =
-        Kbarprod (Kflat a b c d hchain K_orig) 1 * (Pfor a b d 1)ᵀ := by
-      change Kbar (Kflat a b c d hchain K_orig) 0 * (Pfor a b d 1)ᵀ = _
+    have h0 : KtildeProd a b c d hC1 K_orig 0 = 1 := rfl
+    have h1 : Ktilde a b c d hC1 K_orig 0 =
+        Kbarprod (Kflat a b c d hC1 K_orig) 1 * (Pfor a b d 1)ᵀ := by
+      change Kbar (Kflat a b c d hC1 K_orig) 0 * (Pfor a b d 1)ᵀ = _
       congr 1
       simp [Kbarprod]
-    change KtildeProd a b c d hchain K_orig 0 * Ktilde a b c d hchain K_orig 0 = _
+    change KtildeProd a b c d hC1 K_orig 0 * Ktilde a b c d hC1 K_orig 0 = _
     rw [h0, Matrix.one_mul, h1]
   | succ L ih =>
-    have hK : Ktilde a b c d hchain K_orig (L + 1) =
-        Pfor a b d (L + 1) * Kbar (Kflat a b c d hchain K_orig) (L + 1) *
+    have hK : Ktilde a b c d hC1 K_orig (L + 1) =
+        Pfor a b d (L + 1) * Kbar (Kflat a b c d hC1 K_orig) (L + 1) *
           (Pfor a b d (L + 1 + 1))ᵀ := rfl
-    change KtildeProd a b c d hchain K_orig (L + 1) * Ktilde a b c d hchain K_orig (L + 1) = _
+    change KtildeProd a b c d hC1 K_orig (L + 1) * Ktilde a b c d hC1 K_orig (L + 1) = _
     rw [ih, hK, ← Matrix.mul_assoc,
-      Matrix.mul_assoc (Kbarprod (Kflat a b c d hchain K_orig) (L + 1)),
+      Matrix.mul_assoc (Kbarprod (Kflat a b c d hC1 K_orig) (L + 1)),
       ← Matrix.mul_assoc (Pfor a b d (L + 1))ᵀ (Pfor a b d (L + 1))
-        (Kbar (Kflat a b c d hchain K_orig) (L + 1)),
+        (Kbar (Kflat a b c d hC1 K_orig) (L + 1)),
       Pfor_orthogonal, Matrix.one_mul]
-    change Kbarprod (Kflat a b c d hchain K_orig) (L + 1) *
-        Kbar (Kflat a b c d hchain K_orig) (L + 1) * (Pfor a b d (L + 1 + 1))ᵀ = _
+    change Kbarprod (Kflat a b c d hC1 K_orig) (L + 1) *
+        Kbar (Kflat a b c d hC1 K_orig) (L + 1) * (Pfor a b d (L + 1 + 1))ᵀ = _
     rfl

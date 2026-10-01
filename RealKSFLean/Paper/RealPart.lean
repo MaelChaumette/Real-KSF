@@ -4,12 +4,11 @@ import Mathlib.Data.Complex.BigOperators
 /-!
 # Real and imaginary parts of a product of complex matrices
 
-This file formalizes the algebraic identities of Section III-A of the paper
-*"On the Real and Imaginary Parts of Kronecker-Sparse Factorizations, with
-Application to Fast Transforms"* (equations (1), (2) and (3)): the real (resp.
-imaginary) part of a product of `L` complex matrices can be written as a
-product of `L` real matrices, obtained by doubling the row/column spaces of
-all but the outer factors.
+This file formalizes the "simple linear algebra" behind Section III-A of the paper
+*"On the Real Part of Butterfly Factorizations, with Application to Fast Transforms"*:
+the real and imaginary parts of a product of two complex matrices, written as products
+of real block matrices. Iterating these two identities gives the pre-factorization (1)
+of the real part of a product of `L` factors (`RealKSFLean.Paper.RealPartChain`).
 
 The Kronecker-sparse structure itself (Section II) is treated in
 `RealKSFLean.Definitions`/`RealKSFLean.Paper.Definition1`; this file only contains the
@@ -20,7 +19,7 @@ open Matrix
 
 variable {m n p : Type*} [Fintype n]
 
-/-- Equation (1): `Re(K₁ K₂) = [Re K₁ | Im K₁] * [Re K₂ ; -Im K₂]`. -/
+/-- `Re(K₁ K₂) = [Re K₁ | Im K₁] * [Re K₂ ; -Im K₂]` (equation (1) for `L = 2`). -/
 theorem re_mul (K₁ : Matrix m n ℂ) (K₂ : Matrix n p ℂ) :
     (K₁ * K₂).map Complex.re =
       fromCols (K₁.map Complex.re) (K₁.map Complex.im) *
@@ -31,7 +30,7 @@ theorem re_mul (K₁ : Matrix m n ℂ) (K₂ : Matrix n p ℂ) :
     Complex.re_sum, Complex.mul_re, Finset.sum_sub_distrib, mul_neg, Finset.sum_neg_distrib]
   ring
 
-/-- Equation (2): `Im(K₁ K₂) = [Re K₁ | Im K₁] * [Im K₂ ; Re K₂]`. -/
+/-- `Im(K₁ K₂) = [Re K₁ | Im K₁] * [Im K₂ ; Re K₂]`. -/
 theorem im_mul (K₁ : Matrix m n ℂ) (K₂ : Matrix n p ℂ) :
     (K₁ * K₂).map Complex.im =
       fromCols (K₁.map Complex.re) (K₁.map Complex.im) *

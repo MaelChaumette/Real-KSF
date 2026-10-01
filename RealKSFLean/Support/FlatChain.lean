@@ -1,26 +1,26 @@
 import RealKSFLean.Definitions
-import RealKSFLean.Paper.Lemma2
+import RealKSFLean.Paper.Lemma1
 import RealKSFLean.Support.Permutation
 
 /-!
-# From the abstract `(A, B, D)` picture to flat `Fin`-indexed chains
+# From the abstract `(A, B, D)` picture to flat `Fin`-indexed patterns
 
-`RealKSFLean.Paper.Lemma1` and `RealKSFLean.Paper.Lemma2` prove Lemma 1 and Lemma 2 for a single
-chain, using *abstract* index types `A, B, D` for the "outer", "middle" and "inner" coordinates.
-This is enough there because both lemmas only ever look at *one* chain's own structure.
+`RealKSFLean.Paper.Equation8` and `RealKSFLean.Paper.Lemma1` prove equation (8) and Lemma 1 for a
+single pattern, using *abstract* index types `A, B, D` for the "outer", "middle" and "inner"
+coordinates. This is enough there because both only ever look at *one* pattern's own structure.
 
-Lemma 3 (and later Proposition 1) compare *two different* chains `π = (a, b, c, d)` and
+Lemma 2 (and later Proposition 1) compare *two different* patterns `π = (a, b, c, d)` and
 `π' = (a', b', c', d')`, and the matrix product `Pπ' · (something built from π)` only makes
 sense once we remember that Kronecker-sparse factors are really indexed by *flat* naturals:
 `Kπ ⊆ ℝ^{abd × acd}`, i.e. rows/columns are `Fin (a*b*d)` and `Fin (a*c*d)`, not the product
-type `Fin a × Fin b × Fin d`. Two chains with `a*c*d = a'*b'*d'` (condition **C1**) then share
+type `Fin a × Fin b × Fin d`. Two patterns with `a*c*d = a'*b'*d'` (condition **C1**) then share
 the *same* flat index set on the nose, which is what makes Proposition 1's condition
 meaningful.
 
 This file establishes the technical properties of the flat bridge built in `RealKSFLean.Definitions`
 (`finChainEquiv`, `SF`, `PpermF`, `repeatFstFlat`, `sumToFinEquiv`, `IsKSparseFlat`): explicit
 value formulas, orthogonality, and the connection back to `IsKSparse`/`Prop1.rho`. None of this
-is stated as such in the paper — it is the bookkeeping needed to make Lemma 2/3 and Proposition 1
+is stated as such in the paper — it is the bookkeeping needed to make Lemma 1/2 and Proposition 1
 usable on genuinely `Fin`-indexed matrices.
 -/
 
@@ -37,7 +37,7 @@ theorem finChainEquiv_apply_val (a b d : ℕ) (x : Fin a) (y : Fin b) (z : Fin d
   ring
 
 /-- `repeatFst` commutes with reindexing: repeating a reindexed matrix is the same as
-reindexing the repeated matrix. Lets us transport Lemma 1/2 from the abstract `(A, B, D)`
+reindexing the repeated matrix. Lets us transport equation (8)/Lemma 1 from the abstract `(A, B, D)`
 picture to the flat `Fin`-indexed one for free. -/
 theorem repeatFst_submatrix {m m' q q' p : Type*} {R : Type*} (M : Matrix m q R)
     (f : m' → m) (g : q' → q) :
@@ -200,7 +200,7 @@ theorem repeatFstFlat_apply (a b c d : ℕ) (hb : 0 < b) (hc : 0 < c) (hd0 : 0 <
   unfold repeatFst SG
   simp only [Matrix.of_apply, Fin.ext_iff]
 
-/-- **Lemma 2, flat version.** `P_π · [S_π ; S_π] = S_π̄`, genuinely as `Fin`-indexed
+/-- **Lemma 1, flat version.** `P_π · [S_π ; S_π] = S_π̄`, genuinely as `Fin`-indexed
 matrices, obtained from the abstract `Pperm_mul_repeatFst` purely by reindexing
 (`Matrix.submatrix_mul_equiv`) along the shared identification `finChainEquivStack`. -/
 theorem Pperm_mul_repeatFst_flat (a b c d : ℕ) :
@@ -217,8 +217,8 @@ theorem SF_transpose (a b c d : ℕ) : (SF a b c d : Matrix _ _ R)ᵀ = SF a c b
 
 /-- **The explicit formula for `PpermF`.** `PpermF a b d` is exactly the permutation matrix of
 `Prop1.rho b d (a*(b*d))`: this is the identity that connects the *matrix* `PpermF` (built from
-the commutation matrix, `RealKSFLean.Paper.Lemma1`/`RealKSFLean.Paper.Lemma2`) to the *arithmetic*
-permutation `rho` used to state Proposition 1. -/
+the commutation matrix, `RealKSFLean.Paper.Equation8`/`RealKSFLean.Paper.Lemma1`) to the
+*arithmetic* permutation `rho` used to state Proposition 1. -/
 theorem PpermF_apply (a b d : ℕ) (hb : 0 < b) (hd0 : 0 < d)
     (i : Fin (a * (2 * b * d))) (k : Fin (2 * (a * (b * d)))) :
     (PpermF a b d : Matrix _ _ R) i k =

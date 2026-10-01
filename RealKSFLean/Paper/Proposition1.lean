@@ -2,33 +2,39 @@ import RealKSFLean.Definitions
 import RealKSFLean.Support.Proposition1Aux
 
 /-!
-# Proposition 1: the necessary and sufficient condition C1, C2, C3
+# Proposition 1: the conditions C1, C2, C3
 
-This file formalizes the arithmetic core of **Proposition 1**: given two consecutive chains
+This file formalizes the arithmetic core of **Proposition 1**: given two consecutive patterns
 `π = (a, b, c, d)` and `π' = (a', b', c', d')` with `a * c * d = a' * b' * d'` (condition
-**C1**), the permutation `P_{π'}` satisfies equation (10) — and hence, via
-`RealKSFLean.Paper.Lemma3.lemma3_core`, equations (6)/(7) — if and only if
+**C1**), the permutation `P_{π'}` satisfies equation (9) — and hence, via Lemma 2
+(`RealKSFLean.Paper.Lemma2`), equations (4)/(5) — if and only if
 
-* **C2**: `a * c / a' = b' * d' / d ∈ ℕ` (`∃ r, a * c = a' * r ∧ b' * d' = d * r`);
+* **C2**: `d ∣ b' * d'`;
 * **C3**: `a ∣ a'`.
 
-## The precise form of condition (10)
+The architecture-level statement (C1–C3 at every junction ⟹ every permuted factor `K̃_ℓ` of
+(2) lies in `𝒦_{π'_ℓ}`, with `π'_ℓ` as in (3)) is assembled from this core in
+`RealKSFLean.Paper.Proposition1Architecture`.
 
-Equation (10) (`P_{π'} · [S_(a,c,b',d) ; S_(a,c,b',d)] = S_(a,2c,b',d)`) is a matrix equation
+## The precise form of condition (9)
+
+Equation (9) (`P_{π'} · [S_(a,c,b',d) ; S_(a,c,b',d)] = S_(a,2c,b',d)`) is a matrix equation
 between `{0,1}`-matrices whose entries only depend on the *outer* (`a`) and *inner* (`d`)
-coordinates of their row (this is how `SG` is built, `RealKSFLean.Definitions`). Consequently — this
-is exactly the paper's equation (11), reached by restricting attention to the rows sharing a given
-outer/inner coordinate pair `(i, k2)` — condition (10) is equivalent to a purely arithmetic
-statement about the flat permutation
+coordinates of their row (this is how `SG` is built, `RealKSFLean.Definitions`). Consequently —
+this is exactly the paper's equation (10), reached by restricting attention to the rows sharing
+a given outer/inner coordinate pair `(i, k₂)` — condition (9) is equivalent to a purely
+arithmetic statement about the flat permutation
 
 `ρ n := 2 * (b'*d') * ((n % N) / (b'*d')) + (b'*d') * (n / N) + n % (b'*d')`
 
 of `Fin (2 * N)` (`N := a * c * d = a' * b' * d'`; this is the formula for `P_{π'}` unfolded via
 `finProdFinEquiv`/`finTwoEquiv`, see `RealKSFLean.Support.FlatChain`): it must send the "label"
 `((n % N) / (c*d), n % d)` — which of the `a * d` blocks of the *stacked* `(a,c,d)`-grouping
-`n` belongs to — to the label `(m / (2*c*d), m % d)` — which block of the *doubled*
-`(a,2c,d)`-grouping `m = ρ n` belongs to — for every `n < 2 * N`. This is `Prop1.Condition10`
-(`RealKSFLean.Definitions`).
+`n` belongs to, i.e. the pair `(i, k₂)` of `n = idx(ε, i, k₁, k₂)` — to the label
+`(m / (2*c*d), m % d)` — which block of the *doubled* `(a,2c,d)`-grouping `m = ρ n` belongs to,
+i.e. the pair `(i, k₂)` of `m = idx'(i, k'₁, k₂)` — for every `n < 2 * N`. This is
+`Prop1.Condition10` (`RealKSFLean.Definitions`); its equivalence with the matrix equation (9) is
+`matrix_iff_condition10` (`RealKSFLean.Support.Assembly`).
 
 We checked this reformulation numerically against the paper's own formula, on several worked
 examples, before proving anything, to make sure no meaning was lost in translation: e.g. for
@@ -36,9 +42,10 @@ examples, before proving anything, to make sure no meaning was lost in translati
 `a=2, c=3, d=1, a'=3, b'=2, d'=1` (satisfying C1, C2 but *not* C3, since `2 ∤ 3`) it fails.
 
 The proof of both directions follows the paper's own argument almost line by line: sufficiency
-decomposes `c = p * r` (`p := a'/a` from C3, `r` from C2) and computes `ρ` directly; necessity
-tests the *same* two specific inputs the paper tests — `n = N` (giving C2) and `n = c * d`
-(giving C3, via a proof by contradiction identical to the paper's "so `q = 0`" step). -/
+decomposes `c = p * r` (`r := b'd'/d` from C2, `p := a'/a` from C3) and computes `ρ` directly;
+necessity tests the *same* two specific inputs the paper tests — `idx(1, 0, 0, 0) = N` (giving
+C2) and `idx(0, 1, 0, 0) = c * d` (giving C3, via a proof by contradiction identical to the
+paper's "so `q = 0`" step). -/
 
 namespace Prop1
 
@@ -46,8 +53,8 @@ set_option maxHeartbeats 1000000 in
 -- The many `set`/`clear_value` local definitions used to track the mixed-radix decomposition
 -- of `n` make elaboration (in particular `positivity`/`nlinarith`) slower than the default
 -- budget, even though every individual step is elementary.
-/-- **Sufficiency of C2 and C3** (paper's part (a)): decompose `a' = a * p` (C3) and
-`c = p * r` (from C1, C3 and the `r` of C2), then compute `ρ`'s two "coordinates"
+/-- **Sufficiency of C1-C2-C3**: with `r := b' * d' / d` (C2, so that `a * c = a' * r` by C1),
+decompose `a' = a * p` (C3) and `c = p * r`, then compute `ρ`'s two "coordinates"
 (`Nat`-division by `2cd` and remainder mod `d`) directly and check they match `label1`. -/
 theorem sufficiency (a c d a' b' d' r p : ℕ)
     (ha : 0 < a) (ha' : 0 < a') (hc : 0 < c) (hd : 0 < d) (hb' : 0 < b') (hd' : 0 < d')
@@ -128,14 +135,14 @@ theorem sufficiency (a c d a' b' d' r p : ℕ)
 set_option maxHeartbeats 1000000 in
 -- Same reason as `sufficiency`: several `set`-introduced local definitions accumulate in
 -- context, which slows down `positivity`/`nlinarith` below the default heartbeat budget.
-/-- **Necessity of C2 and C3** (paper's part (b)): test `n = N` (equation (10) applied there
-forces `d ∣ b'*d'`, i.e. C2) and, when `a ≥ 2`, `n = c * d` (forces, by contradiction exactly as
-in the paper's "so `q = 0`" step, that `r ∣ c`, hence C3). -/
+/-- **Necessity of C2 & C3**: test `n = idx(1, 0, 0, 0) = N` (equation (10) applied there forces
+`d ∣ b'*d'`, i.e. C2) and, when `a ≥ 2`, `n = idx(0, 1, 0, 0) = c * d` (forces, by contradiction
+exactly as in the paper's "so `q = 0`" step, that `r ∣ c`, hence C3). -/
 theorem necessity (a c d a' b' d' : ℕ)
     (ha : 0 < a) (_ha' : 0 < a') (hc : 0 < c) (hd : 0 < d) (hb' : 0 < b') (hd' : 0 < d')
     (hC1 : a * c * d = a' * b' * d')
     (hCond : Condition10 c d b' d' (a * c * d)) :
-    C2 a c d a' b' d' ∧ C3 a a' := by
+    C2 d b' d' ∧ C3 a a' := by
   set N := a * c * d with hNdef
   set M := b' * d' with hMdef
   have hN0 : 0 < N := by rw [hNdef]; positivity
@@ -164,7 +171,7 @@ theorem necessity (a c d a' b' d' : ℕ)
   have hC2r : a * c = a' * r := by
     have e1 : a * c * d = a' * r * d := by rw [← hNdef, hNaM, hr]; ring
     exact Nat.eq_of_mul_eq_mul_right hd e1
-  refine ⟨⟨r, hC2r, hr⟩, ?_⟩
+  refine ⟨⟨r, hr⟩, ?_⟩
   -- Step 2: derive C3
   rcases Nat.lt_or_ge a 2 with ha1 | ha2
   · have : a = 1 := by omega
@@ -207,29 +214,35 @@ theorem necessity (a c d a' b' d' : ℕ)
       exact Nat.eq_of_mul_eq_mul_right hr0 e2
     exact ⟨p, hap.symm⟩
 
-/-- **Proposition 1**, arithmetic core: given `C1` (`a*c*d = a'*b'*d'`), equation (10) holds if
-and only if `C2 ∧ C3`. -/
+/-- **Proposition 1**, arithmetic core: given `C1` (`a*c*d = a'*b'*d'`), equation (9) (in its
+equivalent form (10), `Condition10`) holds if and only if `C2 ∧ C3`. -/
 theorem prop1_core (a c d a' b' d' : ℕ)
     (ha : 0 < a) (ha' : 0 < a') (hc : 0 < c) (hd : 0 < d) (hb' : 0 < b') (hd' : 0 < d')
     (hC1 : a * c * d = a' * b' * d') :
-    Condition10 c d b' d' (a * c * d) ↔ C2 a c d a' b' d' ∧ C3 a a' := by
-  refine ⟨necessity a c d a' b' d' ha ha' hc hd hb' hd' hC1,
-    fun ⟨⟨r, hr1, hr2⟩, p, hp⟩ n hn =>
-      sufficiency a c d a' b' d' r p ha ha' hc hd hb' hd' hp hr1 hr2 n hn⟩
+    Condition10 c d b' d' (a * c * d) ↔ C2 d b' d' ∧ C3 a a' := by
+  refine ⟨necessity a c d a' b' d' ha ha' hc hd hb' hd' hC1, fun ⟨⟨r, hr2⟩, p, hp⟩ n hn => ?_⟩
+  have hr1 : a * c = a' * r := by
+    have e1 : a * c * d = a' * r * d := by rw [hC1, mul_assoc a', hr2]; ring
+    exact Nat.eq_of_mul_eq_mul_right hd e1
+  exact sufficiency a c d a' b' d' r p ha ha' hc hd hb' hd' hp hr1 hr2 n hn
 
-/-- **Corollary 1** (pairwise form, [3, Def. 4.12] ⟹ Proposition 1's hypotheses). A chainable
-pair of chains satisfies C1, C2 and C3, hence condition (10) holds — and, via
-`RealKSFLean.Paper.Lemma3.lemma3_core`, so do equations (6)/(7): the real part of the product is
-Kronecker-sparse across this junction. This is the *pairwise* statement, which is the actual
-arithmetic content: `C1` follows from `C2` alone (`Chainable2.c1`, `RealKSFLean.Definitions`), so
-chainability's own `C2`- and `C3`-parts already give exactly what `prop1_core` needs. The
-architecture-level statement ("every junction of a chainable architecture") is this pairwise
-fact applied at each junction, with no new arithmetic content — see
-`RealKSFLean.Paper.Corollary1` for the final assembly this feeds into. -/
-theorem chainable_condition10 (a c d a' b' d' : ℕ)
+/-- **Proposition 1**, arithmetic core, packaged with `C1`: under C1, equation (9) holds iff the
+three conditions `Conditions` (C1 ∧ C2 ∧ C3) of Proposition 1 hold. -/
+theorem condition10_iff_conditions (a c d a' b' d' : ℕ)
     (ha : 0 < a) (ha' : 0 < a') (hc : 0 < c) (hd : 0 < d) (hb' : 0 < b') (hd' : 0 < d')
-    (h : Chainable2 a c d a' b' d') :
+    (hC1 : C1 a c d a' b' d') :
+    Condition10 c d b' d' (a * c * d) ↔ Conditions a c d a' b' d' :=
+  (prop1_core a c d a' b' d' ha ha' hc hd hb' hd' hC1).trans
+    ⟨fun ⟨h2, h3⟩ => ⟨hC1, h2, h3⟩, fun h => ⟨h.c2, h.c3⟩⟩
+
+/-- **Sufficiency direction of Proposition 1, for one junction**: if C1, C2 and C3 hold, then
+equation (9) holds — and, via Lemma 2 (`RealKSFLean.Paper.Lemma2`), so do equations (4)/(5): the
+permuted factor is Kronecker-sparse across this junction. The architecture-level statement is
+`RealKSFLean.Paper.Proposition1Architecture`. -/
+theorem conditions_condition10 (a c d a' b' d' : ℕ)
+    (ha : 0 < a) (ha' : 0 < a') (hc : 0 < c) (hd : 0 < d) (hb' : 0 < b') (hd' : 0 < d')
+    (h : Conditions a c d a' b' d') :
     Condition10 c d b' d' (a * c * d) :=
-  (prop1_core a c d a' b' d' ha ha' hc hd hb' hd' h.c1).mpr ⟨h.c2, h.c3⟩
+  (condition10_iff_conditions a c d a' b' d' ha ha' hc hd hb' hd' h.c1).mpr h
 
 end Prop1

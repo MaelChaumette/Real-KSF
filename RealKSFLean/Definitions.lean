@@ -12,9 +12,7 @@ the real/imaginary doubling `K̄`, the arithmetic of Proposition 1, ...) and in 
 telescoping construction `K̃_ℓ`, ... — needed to connect the paper's statements to each other in
 Lean but not part of the paper itself).
 
-No proof of a paper *result* lives here — only definitions, plus a handful of one-line
-structural accessors (`Chainable2.c1/.c2/.c3`) that are needed *inside* later definitions
-(`colCastEquiv`) and so cannot live downstream of them.
+No proof of a paper *result* lives here — only definitions.
 
 Each section below is a straight port of one original file's definitions, in the same order
 they used to appear, so `RealKSFLean/Paper/*.lean` and `RealKSFLean/Support/*.lean` can be read side
@@ -30,17 +28,18 @@ section CommutationMatrix
 variable (m n : Type*) [DecidableEq m] [DecidableEq n]
 variable (R : Type*) [Zero R] [One R]
 
-/-- The commutation matrix `K (m, n) : Matrix (m × n) (n × m) R`. It satisfies
-`K.mulVec A.vec = A.transpose.vec` for every `A : Matrix m n R'`, and hence lets a product `K * X`
-turn a "row-repeat" into a "column-repeat" (Lemma 1). -/
+/-- The commutation matrix `C_{m,n} : Matrix (m × n) (n × m) R` of Definition 2: the permutation
+matrix of `Prod.swap`. It satisfies `C_{m,n}.mulVec A.vec = A.transpose.vec` for every
+`A : Matrix m n R'` (`RealKSFLean.Paper.Definition2`), and lets a product `C_{m,n} * X` turn a
+"row-repeat" into another "row-repeat" (equation (8)). -/
 def commutationMatrix : Matrix (m × n) (n × m) R :=
   Matrix.of fun i j => if i = j.swap then 1 else 0
 
 end CommutationMatrix
 
-/-! ## From `Lemma1` (row/column repetition) -/
+/-! ## Row/column repetition (equation (8)) -/
 
-section Lemma1
+section Repeat
 
 variable {m p q : Type*} [DecidableEq m] [DecidableEq p] [Fintype m] [Fintype p]
 variable {R : Type*} [NonAssocSemiring R]
@@ -52,11 +51,11 @@ def repeatFst (A : Matrix m q R) : Matrix (p × m) q R := Matrix.of fun i j => A
 def repeatSnd (A : Matrix m q R) : Matrix (m × p) q R := Matrix.of fun i j => A i.1 j
 
 /-- "Repeat `N`'s columns along `p`, with `p` first": the matrix analogue of `1_{1×p} ⊗ N`. Used
-for the *column*-doubled matrix `[S_π S_π]` of equations (6)/(7). -/
+for the *column*-doubled matrix `[S_π S_π]` of equation (5). -/
 def repeatFstCol {l : Type*} (N : Matrix l q R) : Matrix l (p × q) R :=
   Matrix.of fun i j => N i j.2
 
-end Lemma1
+end Repeat
 
 /-! ## From `KroneckerSparse` (Definition 1) -/
 
@@ -64,12 +63,13 @@ section KroneckerSparse
 
 variable {a b c d : ℕ} {R : Type*}
 
-/-- The support pattern `S_π = I_a ⊗ 1_{b×c} ⊗ I_d` of a Kronecker-sparse factor of chain
+/-- The support `S_π = I_a ⊗ 1_{b×c} ⊗ I_d` of a Kronecker-sparse factor of (sparsity) pattern
 `π = (a, b, c, d)`, as a `{0, 1}`-valued matrix. -/
 def KSupport (a b c d : ℕ) : Matrix (Fin a × Fin b × Fin d) (Fin a × Fin c × Fin d) ℕ :=
   Matrix.of fun i j => if i.1 = j.1 ∧ i.2.2 = j.2.2 then 1 else 0
 
-/-- **Definition 1.** `K` is a Kronecker-sparse factor of chain `(a, b, c, d)` when its support
+/-- **Definition 1.** `K` is a Kronecker-sparse factor of pattern `(a, b, c, d)` (`K ∈ 𝒦_π`) when
+its support
 is included in `S_π`, i.e. `K i j` can only be nonzero when `i` and `j` agree on their `a`- and
 `d`-components. -/
 def IsKSparse [Zero R] (a b c d : ℕ)
@@ -78,7 +78,7 @@ def IsKSparse [Zero R] (a b c d : ℕ)
 
 end KroneckerSparse
 
-/-! ## From `Permutation` (Lemma 2 / Lemma 3's objects) -/
+/-! ## The permutation `P_π` (Lemma 1 / Lemma 2's objects) -/
 
 section Permutation
 
@@ -98,8 +98,8 @@ def groupEquiv (A B D : Type*) : Bool × A × B × D ≃ A × (Bool × B) × D w
   left_inv _ := rfl
   right_inv _ := rfl
 
-/-- The permutation `P_π := C_{2,a} ⊗ I_{bd}` of equation (9): it acts by the commutation matrix
-on the `(a, ε)` coordinates, and by the identity on the untouched `(b, d)`-coordinates. -/
+/-- The permutation `P_π := C_{a,2} ⊗ I_{bd}` of equation (7): it acts by the commutation matrix
+`C_{a,2}` on the `(a, ε)` coordinates, and by the identity on the untouched `(b, d)`-coordinates. -/
 def Pperm : Matrix (A × (Bool × B) × D) (Bool × A × B × D) R :=
   Matrix.of fun i k =>
     commutationMatrix A Bool R (i.1, i.2.1.1) (k.1, k.2.1) *
@@ -107,17 +107,24 @@ def Pperm : Matrix (A × (Bool × B) × D) (Bool × A × B × D) R :=
 
 end Permutation
 
-/-! ## From `RealPartChain` (equation (3)'s objects) -/
+/-! ## The pre-factorization of the real part (equation (1)'s objects) -/
 
 section RealPartChain
 
 variable {J : ℕ → Type*} [∀ k, Fintype (J k)] [∀ k, DecidableEq (J k)]
 
-/-- The product `K 0 * K 1 * ... * K (L-1) : Matrix (J 0) (J L) ℂ` of a chain of complex
+/-- The product `K 0 * K 1 * ... * K (L-1) : Matrix (J 0) (J L) ℂ` of a sequence of complex
 matrices. -/
 def Kprod (K : (k : ℕ) → Matrix (J k) (J (k + 1)) ℂ) : (L : ℕ) → Matrix (J 0) (J L) ℂ
   | 0 => 1
   | L + 1 => Kprod K L * K L
+
+/-- The same sequence of factors, with the first one multiplied by the scalar `z`: the factors
+of `z K_1 ⋯ K_L`, used to treat `Im(K_1 ⋯ K_L) = Re((-𝚥 K_1) ⋯ K_L)` and more generally
+`Re(z K_1 ⋯ K_L)` (Section III-D). -/
+def scaleFirst (z : ℂ) (K : (k : ℕ) → Matrix (J k) (J (k + 1)) ℂ) (k : ℕ) :
+    Matrix (J k) (J (k + 1)) ℂ :=
+  if k = 0 then z • K k else K k
 
 /-- The "doubled" index family: `J2 J 0 = J 0` and `J2 J (k+1) = J (k+1) ⊕ J (k+1)`. -/
 @[reducible] def J2 (J : ℕ → Type*) : ℕ → Type _
@@ -132,7 +139,7 @@ instance instDecidableEqJ2 : ∀ k, DecidableEq (J2 J k)
   | 0 => (inferInstance : DecidableEq (J 0))
   | _ + 1 => (inferInstance : DecidableEq (_ ⊕ _))
 
-/-- The real "doubled" factors `Kbar 0, Kbar 1, ...` of (3): `Kbar 0` concatenates `Re (K 0)`
+/-- The real "doubled" factors `Kbar 0, Kbar 1, ...` of (1): `Kbar 0` concatenates `Re (K 0)`
 and `Im (K 0)` as columns, while `Kbar (k+1)` is the `2 × 2` block matrix
 `[Re (K (k+1)) Im (K (k+1)) ; -Im (K (k+1)) Re (K (k+1))]`. -/
 def Kbar (K : (k : ℕ) → Matrix (J k) (J (k + 1)) ℂ) :
@@ -156,7 +163,7 @@ section FlatChain
 variable {R : Type*} [CommSemiring R]
 
 /-- The standard mixed-radix identification of the row (or column) space `Fin a × Fin b ×
-Fin d` of a Kronecker-sparse chain with the flat space `Fin (a * b * d)`, matching Definition 1
+Fin d` of a Kronecker-sparse pattern with the flat space `Fin (a * b * d)`, matching Definition 1
 (`ℝ^{abd × acd}`). -/
 def finChainEquiv (a b d : ℕ) : Fin a × Fin b × Fin d ≃ Fin (a * (b * d)) :=
   (Equiv.refl (Fin a)).prodCongr finProdFinEquiv |>.trans finProdFinEquiv
@@ -167,26 +174,26 @@ def boolFinEquiv (n : ℕ) : Bool × Fin n ≃ Fin (2 * n) :=
   (finTwoEquiv.symm.prodCongr (Equiv.refl (Fin n))).trans finProdFinEquiv
 
 /-- The flat identification of the *stacked* row space `Bool × Fin a × Fin b × Fin d` (two
-copies of chain `(a, b, d)`) with `Fin (2 * (a * (b * d)))`. -/
+copies of pattern `(a, b, d)`) with `Fin (2 * (a * (b * d)))`. -/
 def finChainEquivStack (a b d : ℕ) : Bool × Fin a × Fin b × Fin d ≃ Fin (2 * (a * (b * d))) :=
   (Equiv.refl Bool).prodCongr (finChainEquiv a b d) |>.trans (boolFinEquiv (a * (b * d)))
 
-/-- The flat identification of the *doubled* row space `Fin a × (Bool × Fin b) × Fin d` (chain
+/-- The flat identification of the *doubled* row space `Fin a × (Bool × Fin b) × Fin d` (pattern
 `(a, 2b, d)`, with the doubled slot represented as `Bool × Fin b`) with `Fin (a * (2 * b * d))`.
 -/
 def finChainEquiv' (a b d : ℕ) : Fin a × (Bool × Fin b) × Fin d ≃ Fin (a * (2 * b * d)) :=
   ((Equiv.refl (Fin a)).prodCongr ((boolFinEquiv b).prodCongr (Equiv.refl (Fin d)))) |>.trans
     ((Equiv.refl (Fin a)).prodCongr finProdFinEquiv) |>.trans finProdFinEquiv
 
-/-- The flat, `Fin`-indexed support pattern `S_π` of Definition 1, for chain `π = (a, b, c, d)`:
+/-- The flat, `Fin`-indexed support `S_π` of Definition 1, for pattern `π = (a, b, c, d)`:
 `SF a b c d = KSupport a b c d` up to the reindexing `finChainEquiv`. -/
 def SF (a b c d : ℕ) : Matrix (Fin (a * (b * d))) (Fin (a * (c * d))) R :=
   Matrix.submatrix (SG (A := Fin a) (B := Fin b) (C := Fin c) (D := Fin d))
     (finChainEquiv a b d).symm (finChainEquiv a c d).symm
 
-/-- The flat, `Fin`-indexed version of `Pperm`, i.e. the actual permutation `P_π := C_{2,a} ⊗
-I_{bd}` of equation (9), acting between the genuinely `Fin`-indexed spaces `Fin (2*(a*(b*d)))`
-(stack of two copies of chain `(a,b,d)`) and `Fin (a*(2*b*d))` (chain `(a, 2b, d)`). -/
+/-- The flat, `Fin`-indexed version of `Pperm`, i.e. the actual permutation `P_π := C_{a,2} ⊗
+I_{bd}` of equation (7), acting between the genuinely `Fin`-indexed spaces `Fin (2*(a*(b*d)))`
+(stack of two copies of pattern `(a,b,d)`) and `Fin (a*(2*b*d))` (pattern `(a, 2b, d)`). -/
 def PpermF (a b d : ℕ) : Matrix (Fin (a * (2 * b * d))) (Fin (2 * (a * (b * d)))) R :=
   Matrix.submatrix (Pperm (A := Fin a) (B := Fin b) (D := Fin d))
     (finChainEquiv' a b d).symm (finChainEquivStack a b d).symm
@@ -221,19 +228,20 @@ end FlatChain
 
 namespace Prop1
 
-/-- The flat permutation `ρ_{π'}` of equation (9)/(10), for chain `π' = (a', b', d')`. -/
+/-- The flat row-permutation `ρ_{π'}` associated to `P_{π'}` (equations (9)/(10)), for pattern
+`π' = (a', b', d')`. -/
 def rho (b' d' N n : ℕ) : ℕ :=
   2 * (b' * d') * ((n % N) / (b' * d')) + (b' * d') * (n / N) + n % (b' * d')
 
-/-- Which of the `a * d` blocks of the *stacked* chain `(a, c, d)` the flat index `n` belongs
-to. -/
+/-- Which of the `a * d` blocks of the *stacked* pattern `(a, c, d)` the flat index `n` belongs
+to: the pair `(i, k₂)` of the paper's indexing `idx(ε, i, k₁, k₂)` of the rows of `X_ℓ`. -/
 def label1 (c d N n : ℕ) : ℕ × ℕ := ((n % N) / (c * d), n % d)
 
-/-- Which of the `a * d` blocks of the *doubled* chain `(a, 2c, d)` the flat index `m`
-belongs to. -/
+/-- Which of the `a * d` blocks of the *doubled* pattern `(a, 2c, d)` the flat index `m`
+belongs to: the pair `(i, k₂)` of the paper's indexing `idx'(i, k'₁, k₂)` of the rows of `Y_ℓ`. -/
 def label2 (c d m : ℕ) : ℕ × ℕ := (m / (2 * c * d), m % d)
 
-/-- **Equation (10)/(11).** `P_{π'}` sends each block of the stacked `(a,c,d)`-grouping to the
+/-- **Equations (9)/(10).** `P_{π'}` sends each block of the stacked `(a,c,d)`-grouping to the
 identically-labelled block of the doubled `(a,2c,d)`-grouping. -/
 def Condition10 (c d b' d' N : ℕ) : Prop :=
   ∀ n < 2 * N, label2 c d (rho b' d' N n) = label1 c d N n
@@ -241,39 +249,27 @@ def Condition10 (c d b' d' N : ℕ) : Prop :=
 /-- **C1**: `a * c * d = a' * b' * d'` (dimension compatibility for `K_ℓ K_{ℓ+1}`). -/
 def C1 (a c d a' b' d' : ℕ) : Prop := a * c * d = a' * b' * d'
 
-/-- **C2**: `a * c / a' = b' * d' / d` is a natural number `r`. -/
-def C2 (a c d a' b' d' : ℕ) : Prop := ∃ r, a * c = a' * r ∧ b' * d' = d * r
+/-- **C2**: `d ∣ b' * d'`. -/
+def C2 (d b' d' : ℕ) : Prop := d ∣ b' * d'
 
 /-- **C3**: `a ∣ a'`. -/
 def C3 (a a' : ℕ) : Prop := a ∣ a'
 
-/-- Two consecutive chains are **chainable** [3, Def. 4.12]. -/
-structure Chainable2 (a c d a' b' d' : ℕ) : Prop where
-  /-- `a * c / a' = b' * d' / d ∈ ℕ`, exactly `C2`. -/
-  r_dvd : ∃ r, a * c = a' * r ∧ b' * d' = d * r
-  /-- `a ∣ a'`, exactly `C3`. -/
-  a_dvd : a ∣ a'
-  /-- `d' ∣ d`: part of [3]'s chainability, not needed for Proposition 1. -/
+/-- The three conditions **C1**, **C2**, **C3** of Proposition 1, at the junction between two
+consecutive patterns `π_ℓ = (a, b, c, d)` and `π_{ℓ+1} = (a', b', c', d')`. -/
+structure Conditions (a c d a' b' d' : ℕ) : Prop where
+  /-- `a * c * d = a' * b' * d'`. -/
+  c1 : C1 a c d a' b' d'
+  /-- `d ∣ b' * d'`. -/
+  c2 : C2 d b' d'
+  /-- `a ∣ a'`. -/
+  c3 : C3 a a'
+
+/-- Two consecutive patterns are **chainable** [13, Def. 4.12]: as recalled in the letter's
+footnote, this is `C1 ∧ C2 ∧ C3 ∧ (d' ∣ d)`. -/
+structure Chainable2 (a c d a' b' d' : ℕ) : Prop extends Conditions a c d a' b' d' where
+  /-- `d' ∣ d`: part of [13]'s chainability, not needed for Proposition 1. -/
   d_dvd : d' ∣ d
-
-/-- `Chainable2`'s `C2`-half, read off directly from its `r_dvd` field. This (and `.c3`, `.c1`
-below) are one-line structural accessors, not a paper *result* — they are proved here, rather
-than in `RealKSFLean/Paper` or `RealKSFLean/Support`, purely because `colCastEquiv`'s definition
-later in this file needs `.c1` to even typecheck. -/
-theorem Chainable2.c2 (h : Chainable2 a c d a' b' d') : C2 a c d a' b' d' := h.r_dvd
-
-/-- `Chainable2`'s `C3`-half. -/
-theorem Chainable2.c3 (h : Chainable2 a c d a' b' d') : C3 a a' := h.a_dvd
-
-/-- `C1` follows from `C2` alone: both equalities in `C2`'s witness `r` describe the *same*
-product `a * c * d = a' * b' * d'`. -/
-theorem Chainable2.c1 (h : Chainable2 a c d a' b' d') : C1 a c d a' b' d' := by
-  obtain ⟨r, hr1, hr2⟩ := h.r_dvd
-  change a * c * d = a' * b' * d'
-  calc a * c * d = a' * r * d := by rw [hr1]
-    _ = a' * (d * r) := by ring
-    _ = a' * (b' * d') := by rw [hr2]
-    _ = a' * b' * d' := by ring
 
 end Prop1
 
@@ -310,9 +306,9 @@ section ChainAssembly
 open Prop1
 
 variable (a b c d : ℕ → ℕ)
-variable (hchain : ∀ k, Chainable2 (a k) (c k) (d k) (a (k + 1)) (b (k + 1)) (d (k + 1)))
+variable (hC1 : ∀ k, C1 (a k) (c k) (d k) (a (k + 1)) (b (k + 1)) (d (k + 1)))
 
-/-- The flat row space of chain `k`: `Fin (a k * (b k * d k))`, matching `finChainEquiv`'s own
+/-- The flat row space of pattern `k`: `Fin (a k * (b k * d k))`, matching `finChainEquiv`'s own
 convention. -/
 @[reducible] def Jfam (k : ℕ) : Type := Fin (a k * (b k * d k))
 
@@ -321,24 +317,40 @@ instance instFintypeJfam : ∀ k, Fintype (Jfam a b d k) :=
 instance instDecidableEqJfam : ∀ k, DecidableEq (Jfam a b d k) :=
   fun _ => inferInstanceAs (DecidableEq (Fin _))
 
-/-- The `C1`-induced identification of chain `k`'s flat *column* space with chain `k+1`'s flat
-*row* space `Jfam (k+1)`. -/
+/-- The `C1`-induced identification of pattern `k`'s flat *column* space with pattern `k+1`'s
+flat *row* space `Jfam (k+1)`. -/
 def colCastEquiv (k : ℕ) : Fin (a k * (c k * d k)) ≃ Jfam a b d (k + 1) :=
-  natCastEquiv (by rw [← mul_assoc, (hchain k).c1, mul_assoc])
+  natCastEquiv (by
+    rw [← mul_assoc, show a k * c k * d k = a (k + 1) * b (k + 1) * d (k + 1) from hC1 k,
+      mul_assoc])
 
-/-- The flat reindexing of a chain of genuine (`Fin`-product-typed) Kronecker-sparse factors:
+/-- The flat reindexing of a sequence of genuine (`Fin`-product-typed) Kronecker-sparse factors:
 `Kflat k` is `K_orig k` after identifying its row space with `Jfam k` and its column space with
-`Jfam (k+1)` (via `Chainable2.c1`). -/
+`Jfam (k+1)` (via C1). -/
 def Kflat (K_orig : (k : ℕ) → Matrix (Fin (a k) × Fin (b k) × Fin (d k))
     (Fin (a k) × Fin (c k) × Fin (d k)) ℂ) (k : ℕ) :
     Matrix (Jfam a b d k) (Jfam a b d (k + 1)) ℂ :=
   Matrix.submatrix (K_orig k) (finChainEquiv (a k) (b k) (d k)).symm
-    (((finChainEquiv (a k) (c k) (d k)).trans (colCastEquiv a b c d hchain k)).symm)
+    (((finChainEquiv (a k) (c k) (d k)).trans (colCastEquiv a b c d hC1 k)).symm)
 
-/-- The permutation `P_{π_k} := C_{2,a_k} ⊗ I_{b_k d_k}` of equation (9), reindexed via
+/-- The permutation `P_{π_k} := C_{a_k,2} ⊗ I_{b_k d_k}` of equation (7), reindexed via
 `sumToFinEquiv` so it can be inserted directly next to `Kbar`'s `Sum`-typed doubled spaces. -/
 def Pfor (k : ℕ) : Matrix (Fin (a k * (2 * b k * d k))) (Jfam a b d k ⊕ Jfam a b d k) ℝ :=
   Matrix.submatrix (PpermF (a k) (b k) (d k)) (Equiv.refl _) (sumToFinEquiv (a k * (b k * d k)))
+
+/-- The row-permutation `ρ_{π_k}` associated to `Pfor k` (i.e. to `P_{π_k}`), as an equivalence
+from `Kbar`'s `Sum`-typed doubled space to `Pfor k`'s row space: `Pfor k I p = 1` exactly when
+`I = pforEquiv k p`. -/
+def pforEquiv (k : ℕ) : Jfam a b d k ⊕ Jfam a b d k ≃ Fin (a k * (2 * b k * d k)) :=
+  (sumToFinEquiv (a k * (b k * d k))).trans (rhoEquiv (a k) (b k) (d k))
+
+/-- The witness factors used for the "only if" direction of Proposition 1: `K_k := (1 + 𝚥) S_{π_k}`,
+a Kronecker-sparse factor of pattern `π_k` whose real *and* imaginary parts have the full support
+`S_{π_k}`, so that the support of each `K̄_k` is exactly the one of the paper's stacked supports. -/
+def ksWitness (k : ℕ) : Matrix (Fin (a k) × Fin (b k) × Fin (d k))
+    (Fin (a k) × Fin (c k) × Fin (d k)) ℂ :=
+  (1 + Complex.I) • (SG : Matrix (Fin (a k) × Fin (b k) × Fin (d k))
+    (Fin (a k) × Fin (c k) × Fin (d k)) ℂ)
 
 variable (K_orig : (k : ℕ) → Matrix (Fin (a k) × Fin (b k) × Fin (d k))
   (Fin (a k) × Fin (c k) × Fin (d k)) ℂ)
@@ -357,16 +369,18 @@ and the flat "doubled" space `Fin (a k * (2 * b k * d k))` (`Pfor`'s own output)
   | 0 => inferInstanceAs (DecidableEq (Jfam a b d 0))
   | _ + 1 => inferInstanceAs (DecidableEq (Fin _))
 
-/-- **The new, permuted Kronecker-sparse factors** `K̃_k`, equation (4)/(9): `K̃_0 := K̄_0 ·
-P_1ᵀ`, and `K̃_{k+1} := P_{k+1} · K̄_{k+1} · P_{k+2}ᵀ` for the rest. -/
+/-- **The new, permuted Kronecker-sparse factors** `K̃_k`, equation (2) (with `P_ℓ := P_{π_ℓ}`
+as in (7)): `K̃_0 := K̄_0 · P_1ᵀ`, and `K̃_{k+1} := P_{k+1} · K̄_{k+1} · P_{k+2}ᵀ` for the
+interior factors. The last factor `K̃_L := P_L · K̄_L` is not part of this family: it is the
+trailing factor of `re_Kprod_eq_KtildeProd` (`RealKSFLean.Paper.Proposition1Architecture`). -/
 def Ktilde : (k : ℕ) → Matrix (KtildeRow a b d k) (KtildeRow a b d (k + 1)) ℝ
-  | 0 => Kbar (Kflat a b c d hchain K_orig) 0 * (Pfor a b d 1)ᵀ
-  | (k + 1) => Pfor a b d (k + 1) * Kbar (Kflat a b c d hchain K_orig) (k + 1) *
+  | 0 => Kbar (Kflat a b c d hC1 K_orig) 0 * (Pfor a b d 1)ᵀ
+  | (k + 1) => Pfor a b d (k + 1) * Kbar (Kflat a b c d hC1 K_orig) (k + 1) *
       (Pfor a b d (k + 2))ᵀ
 
 /-- The product `K̃_0 · K̃_1 · ... · K̃_{L-1} : Matrix (KtildeRow 0) (KtildeRow L) ℝ`. -/
 def KtildeProd : (L : ℕ) → Matrix (KtildeRow a b d 0) (KtildeRow a b d L) ℝ
   | 0 => 1
-  | L + 1 => KtildeProd L * Ktilde a b c d hchain K_orig L
+  | L + 1 => KtildeProd L * Ktilde a b c d hC1 K_orig L
 
 end ChainAssembly

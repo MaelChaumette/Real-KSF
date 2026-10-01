@@ -1,42 +1,48 @@
 import RealKSFLean.Definitions
 
 /-!
-# Lemma 1: the commutation matrix turns a "row-repeat" into another "row-repeat"
+# Lemma 1: the permutation `P_π` doubles the `b` slot of a Kronecker-sparse pattern
 
-**Lemma 1** of the letter states, for `A ∈ ℂ^{m×n}`,
-`C_{2,m} · (1_{2×1} ⊗ A) = A ⊗ 1_{2×1}`.
+Given a pattern `π = (a, b, c, d)`, Section III-C stacks two copies of the support `S_π` on top
+of each other and shows (**Lemma 1**) that the permutation `P_π := C_{a,2} ⊗ I_{bd}` of
+equation (7) regroups the stack into the support `S_π̄` of the *doubled* pattern
+`π̄ = (a, 2b, c, d)` (see Fig. 1 of the letter).
 
-Both sides are matrices built from `A` by stacking two identical copies of `A` as row-blocks:
-the left-hand side stacks them in the order `(copy, row)` (i.e. `A` is *repeated* along the
-`Fin 2` factor placed *first*), the right-hand side stacks them in the order `(row, copy)`
-(the `Fin 2` factor placed *last*). Multiplying by the commutation matrix on the left is
-exactly what swaps between these two stacking orders. We state this directly (with a general
-index type `p` in place of the specific doubling `Fin 2`, since the argument does not use
-`p = Fin 2` at all) instead of going through `Matrix.kroneckerMap`: the trivial `1×1`
-Kronecker factor used to write `1_{2×1}` in the paper carries no information, and inlining it
-away turns the identity into a one-line computation with `Matrix.mul_apply`.
-
-This is exactly the fact used (packaged with the mixed-product property of the Kronecker
-product) to justify the permutation `P_π` of equation (9), and hence Lemma 2
-(`RealKSFLean.Paper.Lemma2.Pperm_mul_repeatFst`, which builds `P_π` directly from
-`commutationMatrix_mul_repeatFst` below).
+As in `RealKSFLean.Paper.Equation8`, we represent the doubled index set `⟦1, 2b⟧` by `Bool × B`
+rather than by `Fin (2b)` (dropping the never-used trivial `Fin 1` factor of `1_{2×1}`), and
+`P_π` is built *directly from the commutation matrix* of Definition 2, exactly as in the paper's
+construction `P_π := C_{a,2} ⊗ I_{bd}` (equation (7)): `Pperm` acts by the commutation matrix
+`commutationMatrix A Bool R` (i.e. `C_{a,2}`) on the `(a, ε)` coordinates, and by the identity
+elsewhere. Lemma 1 is then proved by the *same* single-nonzero-term computation as equation (8),
+generalized to carry the extra untouched `(b, d)` coordinates along for the ride (this is the
+mixed-product step of the paper's proof).
 -/
 
 open Matrix
 
-variable {m p q : Type*} [DecidableEq m] [DecidableEq p] [Fintype m] [Fintype p]
-variable {R : Type*} [NonAssocSemiring R]
+variable {A B C D : Type*} [DecidableEq A] [Fintype A] [DecidableEq B] [Fintype B]
+  [DecidableEq C] [DecidableEq D] [Fintype D] {R : Type*} [CommSemiring R]
 
-/-- **Lemma 1.** Left-multiplying `repeatFst A` (the `A` repeated with the "copy index" `p`
-placed *first*) by the commutation matrix `commutationMatrix m p R` yields `repeatSnd A` (the
-same repeated matrix, with the copy index placed *last*): `C_{p,m} · (1_{p×1} ⊗ A) = A ⊗
-1_{p×1}`. -/
-theorem commutationMatrix_mul_repeatFst (A : Matrix m q R) :
-    commutationMatrix m p R * repeatFst A = repeatSnd A := by
+omit [DecidableEq C] in
+/-- **Lemma 1.** `P_π · [S_π ; S_π] = S_π̄`: applying `Pperm` to the two stacked copies of `S_π`
+(`repeatFst (SG A B C D)`, the analogue of `1_{2×1} ⊗ S_π`) yields exactly the support `S_π̄` of
+the doubled pattern `π̄ = (a, 2b, c, d)`. -/
+theorem Pperm_mul_repeatFst :
+    (Pperm : Matrix (A × (Bool × B) × D) (Bool × A × B × D) R) *
+        repeatFst (p := Bool) (SG : Matrix (A × B × D) (A × C × D) R) =
+      (SG : Matrix (A × (Bool × B) × D) (A × C × D) R) := by
   ext i j
-  rw [Matrix.mul_apply, Finset.sum_eq_single i.swap]
-  · simp [commutationMatrix, repeatFst, repeatSnd]
-  · intro k _ hk
-    have hik : i ≠ k.swap := fun h => hk (by rw [h, Prod.swap_swap])
-    simp [commutationMatrix, hik]
+  rw [Matrix.mul_apply, Finset.sum_eq_single (i.2.1.1, i.1, i.2.1.2, i.2.2)]
+  · simp [Pperm, repeatFst, SG, commutationMatrix]
+  · rintro ⟨ε, x, y, z⟩ - hk
+    have hz : (Pperm : Matrix (A × (Bool × B) × D) (Bool × A × B × D) R) i (ε, x, y, z) = 0 := by
+      simp only [Pperm, commutationMatrix, Matrix.of_apply, Prod.swap_prod_mk]
+      rcases eq_or_ne (i.1, i.2.1.1) (x, ε) with h | h
+      · rcases eq_or_ne i.2.1.2 y with hy | hy
+        · rcases eq_or_ne i.2.2 z with h2 | h2
+          · exact absurd (by simp_all [Prod.ext_iff]) hk
+          · simp [h2]
+        · simp [hy]
+      · simp [h]
+    rw [hz, zero_mul]
   · exact fun h => absurd (Finset.mem_univ _) h

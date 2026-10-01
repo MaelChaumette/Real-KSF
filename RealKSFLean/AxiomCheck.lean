@@ -1,10 +1,12 @@
-import RealKSFLean.Paper.Lemma1
 import RealKSFLean.Paper.Definition1
+import RealKSFLean.Paper.Definition2
+import RealKSFLean.Paper.Equation8
+import RealKSFLean.Paper.Lemma1
 import RealKSFLean.Paper.Lemma2
-import RealKSFLean.Paper.Lemma3
 import RealKSFLean.Paper.RealPart
 import RealKSFLean.Paper.RealPartChain
 import RealKSFLean.Paper.Proposition1
+import RealKSFLean.Paper.Proposition1Architecture
 import RealKSFLean.Paper.Corollary1
 
 /-!
@@ -26,44 +28,62 @@ extra axiom's name) the next time this file is built.
 
 open Prop1
 
-/-! ## `Lemma1.lean` -/
-
-#print axioms commutationMatrix_mul_repeatFst
-
 /-! ## `Definition1.lean` -/
 
 #print axioms IsKSparse.map
 #print axioms IsKSparse.re
 #print axioms IsKSparse.im
+#print axioms IsKSparse.smul
 
-/-! ## `Lemma2.lean` -/
+/-! ## `Definition2.lean` -/
+
+#print axioms commutationMatrix_mulVec_vec
+
+/-! ## `Equation8.lean` -/
+
+#print axioms commutationMatrix_mul_repeatFst
+
+/-! ## `Lemma1.lean` -/
 
 #print axioms Pperm_mul_repeatFst
 
-/-! ## `Lemma3.lean` -/
+/-! ## `Lemma2.lean` -/
 
-#print axioms lemma3_core
+#print axioms lemma2_core
+#print axioms lemma2_first
 
-/-! ## `RealPart.lean` (equations (1)–(2)) -/
+/-! ## `RealPart.lean` -/
 
 #print axioms re_mul
 #print axioms im_mul
 
-/-! ## `RealPartChain.lean` (equation (3), Remark 2) -/
+/-! ## `RealPartChain.lean` (equation (1), imaginary part) -/
 
 #print axioms chain_re_im
 #print axioms chain_re
 #print axioms chain_im
+#print axioms Kprod_scaleFirst
+#print axioms im_Kprod_eq_re_scaleFirst
 
 /-! ## `Proposition1.lean` -/
 
 #print axioms Prop1.sufficiency
 #print axioms Prop1.necessity
 #print axioms Prop1.prop1_core
-#print axioms Prop1.chainable_condition10
+#print axioms Prop1.condition10_iff_conditions
+#print axioms Prop1.conditions_condition10
 
-/-! ## `Corollary1.lean` -/
+/-! ## `Proposition1Architecture.lean` -/
 
 #print axioms re_Kprod_eq_KtildeProd
 #print axioms ktilde_zero_isKSparse
 #print axioms ktilde_succ_isKSparse
+#print axioms ktilde_last_isKSparse
+#print axioms conditions_of_ktilde_zero
+#print axioms conditions_of_ktilde_succ
+#print axioms proposition1
+
+/-! ## `Corollary1.lean` -/
+
+#print axioms chainable_conditions
+#print axioms corollary1

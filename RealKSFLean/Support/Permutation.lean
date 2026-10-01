@@ -3,8 +3,8 @@ import RealKSFLean.Definitions
 /-!
 # `Pperm`'s technical properties
 
-Supporting facts about `Pperm`/`SG` (`RealKSFLean.Definitions`) needed to assemble Lemma 3
-(`RealKSFLean.Paper.Lemma3`) and the final telescoping construction
+Supporting facts about `Pperm`/`SG` (`RealKSFLean.Definitions`) needed to assemble Lemma 2
+(`RealKSFLean.Paper.Lemma2`) and the final telescoping construction
 (`RealKSFLean.Support.ChainAssembly`): `Pperm_apply` gives `Pperm`'s entries explicitly,
 `Pperm_orthogonal` shows it is a genuine permutation matrix, and `SG_transpose` shows `S_π`'s
 support is (up to swapping `b` and `c`) symmetric under transposition. None of this is stated as
@@ -79,8 +79,8 @@ theorem Pperm_orthogonal :
 
 omit [Fintype A] [DecidableEq B] [Fintype B] [DecidableEq C] [Fintype D] in
 /-- `S_π` only depends on the `(a, d)`-coordinates, so it is (up to swapping `b` and `c`)
-symmetric under transposition: `S_(a,b,c,d)ᵀ = S_(a,c,b,d)`. This is what lets Lemma 2's
-*row*-doubling statement also give a *column*-doubling one for free (Lemma 3's use of Lemma 2
+symmetric under transposition: `S_(a,b,c,d)ᵀ = S_(a,c,b,d)`. This is what lets Lemma 1's
+*row*-doubling statement also give a *column*-doubling one for free (Lemma 2's use of Lemma 1
 "on the other side"). -/
 theorem SG_transpose :
     (SG : Matrix (A × B × D) (A × C × D) R)ᵀ = (SG : Matrix (A × C × D) (A × B × D) R) := by
