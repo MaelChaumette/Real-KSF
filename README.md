@@ -90,13 +90,10 @@ A clean `lake build` produces **zero errors, zero warnings, and zero `sorry`s**.
 
 ### Browsing the documentation
 
-CI ([`lean_action_ci.yml`](.github/workflows/lean_action_ci.yml)) builds the project and
-generates hoverable HTML documentation with
-[`doc-gen4`](https://github.com/leanprover/doc-gen4) via
-[`docgen-action`](https://github.com/leanprover-community/docgen-action) on every push,
-ready to deploy to GitHub Pages. To generate the same documentation locally, add `doc-gen4` as a
-dev dependency (`lake add doc-gen4 --dev` or see the `docgen-action` README) and run
-`lake -R -Kenv=dev build RealKSFLean:docs`.
+CI ([`lean_action_ci.yml`](.github/workflows/lean_action_ci.yml)) builds the project on every
+push. To generate hoverable HTML documentation locally with
+[`doc-gen4`](https://github.com/leanprover/doc-gen4), add it as a dev dependency
+(`lake add doc-gen4 --dev`) and run `lake -R -Kenv=dev build RealKSFLean:docs`.
 
 ## Status
 
