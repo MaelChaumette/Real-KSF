@@ -9,9 +9,8 @@ formalization of the results of
 
 > Maël Chaumette, Rémi Gribonval, Elisa Riccietti,
 > *"On the Real Part of Butterfly Factorizations, with Application to Fast Transforms."*
-> <!-- TODO: add venue / year / arXiv or DOI link once available -->
 
-The paper studies **butterfly factorizations** — products of Kronecker-sparse factors, i.e. matrices whose supports follow a Kronecker pattern $\mathbf{I}_a ⊗ \mathbf{1}_{b×c} ⊗ \mathbf{I}_d$ — and shows that if a complex matrix $\mathbf{A}$ admits a butterfly factorization whose architecture satisfies three explicit conditions C1–C3 (in particular, any *chainable architecture* [[1, Definition 4.12]](#1)), then its real part $\mathrm{Re}(\mathbf{A})$ also admits an explicit butterfly factorization, doubling the row/column spaces along the way. The imaginary part, and more generally $\mathrm{Re}(z\mathbf{A})$, follows since $\mathrm{Im}(\mathbf{K}_1\cdots\mathbf{K}_L) = \mathrm{Re}((-\jmath\mathbf{K}_1)\cdots\mathbf{K}_L)$.
+The paper studies **butterfly factorizations** — products of Kronecker-sparse factors, i.e. matrices whose supports follow a Kronecker pattern $\mathbf{I}_a \otimes \mathbf{1}_{b×c} \otimes \mathbf{I}_d$ — and shows that if a complex matrix $\mathbf{A}$ admits a butterfly factorization whose architecture satisfies three explicit conditions C1–C3 (in particular, any *chainable architecture* [[1, Definition 4.12]](#1)), then its real part $\mathrm{Re}(\mathbf{A})$ also admits an explicit butterfly factorization, doubling the row/column spaces along the way. The imaginary part, and more generally $\mathrm{Re}(z\mathbf{A})$, follows since $\mathrm{Im}(\mathbf{K}_1\cdots\mathbf{K}_L) = \mathrm{Re}((-\jmath\mathbf{K}_1)\cdots\mathbf{K}_L)$.
 
 This repository formalizes the numbered statements of the paper (Definitions 1–2, equations (1)–(10), Lemmas 1–2, Proposition 1, Corollary 1) as machine-checked Lean theorems, with **no `sorry` and no additional axioms** beyond what Mathlib itself uses. It also contains the Python code of the paper's timing experiments on the DCT.
 
