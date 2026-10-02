@@ -1,0 +1,8 @@
+numpy
+matplotlib
+torch
+lazylinop
+seaborn
+mlflow
+tqdm
+array-api-compat
